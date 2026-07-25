@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "title": "Turnix",
+    "description": "Appointment, queue and customer service management"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "search": "Search",
+    "loading": "Loading"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "appointments": "Appointments",
+    "queue": "Queue",
+    "turnBoxes": "Service stations",
+    "customers": "Customers",
+    "services": "Services",
+    "payments": "Payments",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "home": {
+    "title": "Welcome to Turnix",
+    "description": "A platform for managing appointments, queues and customer service"
+  },
+  "language": {
+    "label": "Language",
+    "spanish": "Spanish",
+    "english": "English"
+  },
+  "theme": {
+    "label": "Select theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  }
+}

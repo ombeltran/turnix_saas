@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "title": "Turnix",
+    "description": "Gestión de citas, turnos y atención al cliente"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "search": "Buscar",
+    "loading": "Cargando"
+  },
+  "navigation": {
+    "dashboard": "Resumen",
+    "appointments": "Citas",
+    "queue": "Turnos",
+    "turnBoxes": "Puestos de atención",
+    "customers": "Clientes",
+    "services": "Servicios",
+    "payments": "Pagos",
+    "reports": "Reportes",
+    "settings": "Configuración"
+  },
+  "home": {
+    "title": "Bienvenido a Turnix",
+    "description": "Plataforma para gestionar citas, turnos y atención al cliente"
+  },
+  "language": {
+    "label": "Idioma",
+    "spanish": "Español",
+    "english": "Inglés"
+  },
+  "theme": {
+    "label": "Seleccionar tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema"
+  }
+}
