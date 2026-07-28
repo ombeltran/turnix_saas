@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "Turnix",
-    "description": "Appointment, queue and customer service management"
+    "description": "Appointments, queue and customer service management"
   },
   "common": {
     "save": "Save",
@@ -9,22 +9,44 @@
     "edit": "Edit",
     "delete": "Delete",
     "search": "Search",
-    "loading": "Loading"
+    "loading": "Loading",
+    "close": "Close",
+    "active": "Active"
   },
   "navigation": {
     "dashboard": "Dashboard",
     "appointments": "Appointments",
     "queue": "Queue",
-    "turnBoxes": "Service stations",
     "customers": "Customers",
     "services": "Services",
+    "employees": "Employees",
     "payments": "Payments",
     "reports": "Reports",
     "settings": "Settings"
   },
   "home": {
     "title": "Welcome to Turnix",
-    "description": "A platform for managing appointments, queues and customer service"
+    "subtitle": "Platform to manage appointments, queues and customer service.",
+
+    "todayAppointments": {
+      "title": "Today's Appointments",
+      "description": "Scheduled services for today.",
+      "pending": "{count} appointments are still pending",
+      "newAppointment": "New Appointment",
+      "viewSchedule": "View Schedule"
+    },
+
+    "shiftStatus": {
+      "title": "Queue Status",
+      "description": "Available Badge component variants.",
+
+      "unassigned": "Unassigned",
+      "scheduled": "Scheduled",
+      "confirmed": "Confirmed",
+      "waiting": "Waiting",
+      "serving": "In Service",
+      "cancelled": "Cancelled"
+    }
   },
   "language": {
     "label": "Language",
@@ -32,9 +54,19 @@
     "english": "English"
   },
   "theme": {
-    "label": "Select theme",
+    "label": "Theme",
     "light": "Light",
-    "dark": "Dark",
-    "system": "System"
-  }
+    "dark": "Dark"
+  },
+  "appointments": {},
+  "queue": {},
+  "customers": {},
+  "services": {},
+  "employees": {},
+  "payments": {},
+  "reports": {},
+  "settings": {},
+  "validation": {},
+  "errors": {},
+  "notifications": {}
 }

@@ -1,3 +1,53 @@
+export type NavigationKey =
+  | "dashboard"
+  | "appointments"
+  | "queue"
+  | "customers"
+  | "services"
+  | "employees"
+  | "reports"
+  | "settings";
+
+export type NavigationItem = {
+  key: NavigationKey;
+  href: string;
+};
+
+export const navigation: NavigationItem[] = [
+  {
+    key: "dashboard",
+    href: "/",
+  },
+  {
+    key: "appointments",
+    href: "/appointments",
+  },
+  {
+    key: "queue",
+    href: "/queue",
+  },
+  {
+    key: "customers",
+    href: "/customers",
+  },
+  {
+    key: "services",
+    href: "/services",
+  },
+  {
+    key: "employees",
+    href: "/employees",
+  },
+  {
+    key: "reports",
+    href: "/reports",
+  },
+  {
+    key: "settings",
+    href: "/settings",
+  },
+];
+
 export const dashboardNavigation = [
   {
     label: "Resumen",

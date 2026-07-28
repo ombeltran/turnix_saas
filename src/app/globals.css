@@ -53,13 +53,18 @@
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-full: 9999px;
+
+  /* Navigation */
+  --navigation-active: #004ac6;
+  --navigation-active-hover: #003a9e;
+  --navigation-active-foreground: #ffffff;
 }
 
 .dark {
   /* Brand */
   --primary: #8ab4ff;
   --primary-hover: #a8c7ff;
-  --primary-foreground: #002e69;
+  --primary-foreground: #ffffff;
 
   /* Backgrounds */
   --background: #0f1724;
@@ -97,6 +102,11 @@
   --shadow-lg:
     0 12px 16px -4px rgb(0 0 0 / 35%),
     0 4px 6px -2px rgb(0 0 0 / 20%);
+
+    /* Navigation */
+  --navigation-active: #004ac6;
+  --navigation-active-hover: #145fd1;
+  --navigation-active-foreground: #ffffff;
 }
 
 @theme inline {
@@ -129,6 +139,12 @@
 
   --color-info: var(--info);
   --color-info-background: var(--info-background);
+
+  --color-navigation-active: var(--navigation-active);
+  --color-navigation-active-hover: var(--navigation-active-hover);
+  --color-navigation-active-foreground: var(
+  --navigation-active-foreground
+);
 }
 
 * {
@@ -161,7 +177,6 @@ button {
 }
 
 a {
-  color: inherit;
   text-decoration: none;
 }
 

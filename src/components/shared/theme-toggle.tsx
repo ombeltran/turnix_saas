@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { Laptop, Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 
@@ -18,11 +18,6 @@ const themeOptions = [
     value: "dark",
     translationKey: "dark",
     icon: Moon,
-  },
-  {
-    value: "system",
-    translationKey: "system",
-    icon: Laptop,
   },
 ] as const;
 

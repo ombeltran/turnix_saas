@@ -9,32 +9,64 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "search": "Buscar",
-    "loading": "Cargando"
+    "loading": "Cargando",
+    "close": "Cerrar",
+    "active": "Activo"
   },
   "navigation": {
     "dashboard": "Resumen",
     "appointments": "Citas",
     "queue": "Turnos",
-    "turnBoxes": "Puestos de atención",
     "customers": "Clientes",
     "services": "Servicios",
+    "employees": "Empleados",
     "payments": "Pagos",
     "reports": "Reportes",
     "settings": "Configuración"
   },
   "home": {
     "title": "Bienvenido a Turnix",
-    "description": "Plataforma para gestionar citas, turnos y atención al cliente"
+    "subtitle": "Plataforma para gestionar citas, turnos y atención al cliente",
+
+    "todayAppointments": {
+      "title": "Citas de hoy",
+      "description": "Servicios programados para hoy.",
+      "pending": "{count} citas aún están pendientes",
+      "newAppointment": "Nueva cita",
+      "viewSchedule": "Ver agenda"
+    },
+
+    "shiftStatus": {
+      "title": "Estados de los turnos",
+      "description": "Variantes disponibles del componente Badge.",
+
+      "unassigned": "Sin asignar",
+      "scheduled": "Programada",
+      "confirmed": "Confirmada",
+      "waiting": "En espera",
+      "serving": "En atención",
+      "cancelled": "Cancelada"
+    }
   },
   "language": {
     "label": "Idioma",
     "spanish": "Español",
-    "english": "Inglés"
+    "english": "English"
   },
   "theme": {
-    "label": "Seleccionar tema",
+    "label": "Tema",
     "light": "Claro",
-    "dark": "Oscuro",
-    "system": "Sistema"
-  }
+    "dark": "Oscuro"
+  },
+  "appointments": {},
+  "queue": {},
+  "customers": {},
+  "services": {},
+  "employees": {},
+  "payments": {},
+  "reports": {},
+  "settings": {},
+  "validation": {},
+  "errors": {},
+  "notifications": {}
 }
