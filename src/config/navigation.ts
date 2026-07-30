@@ -5,6 +5,7 @@ export type NavigationKey =
   | "customers"
   | "services"
   | "employees"
+  | "payments"
   | "reports"
   | "settings";
 
@@ -33,6 +34,10 @@ export const navigation: NavigationItem[] = [
   {
     key: "services",
     href: "/services",
+  },
+  {
+    key: "payments",
+    href: "/payments",
   },
   {
     key: "employees",

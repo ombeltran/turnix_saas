@@ -1,18 +1,32 @@
+import { Download, Plus } from "lucide-react";
+
+import { PaymentsBoard } from "@/components/business/payments-board";
 import { Topbar } from "@/components/layout/topbar";
-import { getTranslations } from "next-intl/server";
+import { Button } from "@/components/ui/button";
 
-export default async function CustomersPage() {
-  const home = await getTranslations("home");
-
+export default function PaymentsPage() {
   return (
     <>
       <Topbar
-        title={home("title")}
-        subtitle={home("subtitle")}
+        title="Payments"
+        subtitle="Manage transactions, revenue and pending charges"
+        actions={
+          <>
+            <Button variant="outline">
+              <Download className="size-4" />
+              Export
+            </Button>
+
+            <Button>
+              <Plus className="size-4" />
+              New payment
+            </Button>
+          </>
+        }
       />
 
-      <main className="flex-1 p-6">
-        Próximamente...
+      <main className="flex-1 p-4 md:p-6 lg:p-8">
+        <PaymentsBoard />
       </main>
     </>
   );
