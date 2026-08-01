@@ -14,6 +14,11 @@ import {
   X,
 } from "lucide-react";
 
+import {
+  AddWalkInPanel,
+  type WalkInData,
+} from "@/components/business/add-walk-in-panel";
+
 import { QueueStatusBadge } from "@/components/business/queue-status-badge";
 import { StatCard } from "@/components/shared/stat-card";
 import { Badge } from "@/components/ui/badge";
@@ -27,15 +32,24 @@ import {
 } from "@/components/ui/card";
 import { initialQueue, type QueueItem } from "@/mocks/queue";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
-export function QueueBoard() {
+type QueueBoardProps = {
+  isWalkInPanelOpen: boolean;
+  onWalkInPanelOpenChange: (open: boolean) => void;
+};
+
+export function QueueBoard({
+  isWalkInPanelOpen,
+  onWalkInPanelOpenChange,
+}: QueueBoardProps) {
   const [queue, setQueue] = useState<QueueItem[]>(initialQueue);
-
   const waitingCustomers = useMemo(
     () => queue.filter((item) => item.status === "waiting"),
     [queue],
   );
 
+  const t = useTranslations("queue");
   const activeCustomers = useMemo(
     () =>
       queue.filter(
@@ -50,6 +64,20 @@ export function QueueBoard() {
           waitingCustomers.length,
       )
     : 0;
+
+  const nextTicket = useMemo(() => {
+    const highestTicketNumber = queue.reduce((highest, item) => {
+      const ticketNumber = Number(item.ticket.split("-")[1]);
+
+      if (Number.isNaN(ticketNumber)) {
+        return highest;
+      }
+
+      return Math.max(highest, ticketNumber);
+    }, 0);
+
+    return `A-${String(highestTicketNumber + 1).padStart(3, "0")}`;
+  }, [queue]);
 
   function updateStatus(id: string, status: QueueItem["status"]) {
     setQueue((currentQueue) =>
@@ -75,37 +103,59 @@ export function QueueBoard() {
     updateStatus(nextCustomer.id, "called");
   }
 
+  function addWalkIn(walkIn: WalkInData) {
+    const now = new Date();
+
+    const newQueueItem: QueueItem = {
+      id: `QUEUE-${crypto.randomUUID()}`,
+      ticket: nextTicket,
+      customer: walkIn.customer,
+      service: walkIn.service,
+      employee: walkIn.employee,
+      arrivalTime: now.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+      }),
+      waitMinutes: 0,
+      status: "waiting",
+      priority: walkIn.priority,
+    };
+
+    setQueue((currentQueue) => [...currentQueue, newQueueItem]);
+    onWalkInPanelOpenChange(false);
+  }
+
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6">
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Customers waiting"
+          title={t("customersWaiting")}
           value={waitingCustomers.length}
-          description="currently in the queue"
+          description={t("currentlyInQueue")}
           icon={UsersRound}
           variant="warning"
         />
 
         <StatCard
-          title="Average wait"
-          value={`${averageWait} min`}
-          description="estimated waiting time"
+          title={t("averageWait")}
+          value={t("waitMinutes", { minutes: averageWait })}
+          description={t("estimatedWaitingTime")}
           icon={Clock3}
           variant="info"
         />
 
         <StatCard
-          title="In service"
+          title={t("inService")}
           value={queue.filter((item) => item.status === "inService").length}
-          description="customers being attended"
+          description={t("customersBeingAttended")}
           icon={UserRoundCheck}
           variant="primary"
         />
 
         <StatCard
-          title="Completed today"
+          title={t("completedToday")}
           value={18}
-          description="services completed"
+          description={t("servicesCompleted")}
           trend="+12%"
           icon={Check}
           variant="success"
@@ -116,9 +166,9 @@ export function QueueBoard() {
         <Card>
           <CardHeader className="flex-row items-start justify-between gap-4">
             <div>
-              <CardTitle>Waiting queue</CardTitle>
+              <CardTitle>{t("waitingQueue")}</CardTitle>
 
-              <CardDescription>Customers waiting to be called</CardDescription>
+              <CardDescription>{t("waitingQueueDescription")}</CardDescription>
             </div>
 
             <Button
@@ -126,7 +176,7 @@ export function QueueBoard() {
               disabled={waitingCustomers.length === 0}
             >
               <SkipForward className="size-4" />
-              Call next
+              {t("CallNext")}
             </Button>
           </CardHeader>
 
@@ -162,11 +212,11 @@ export function QueueBoard() {
                           </p>
 
                           {item.priority ? (
-                            <Badge variant="danger">Priority</Badge>
+                            <Badge variant="danger">{t("priority")}</Badge>
                           ) : null}
 
                           {index === 0 ? (
-                            <Badge variant="primary">Next</Badge>
+                            <Badge variant="primary">{t("next")}</Badge>
                           ) : null}
                         </div>
 
@@ -178,7 +228,9 @@ export function QueueBoard() {
 
                     <div className="flex flex-1 flex-wrap items-center gap-6 md:justify-end">
                       <div>
-                        <p className="text-xs text-foreground-muted">Arrival</p>
+                        <p className="text-xs text-foreground-muted">
+                          {t("arrival")}
+                        </p>
 
                         <p className="mt-1 text-sm font-medium text-foreground">
                           {item.arrivalTime}
@@ -186,10 +238,12 @@ export function QueueBoard() {
                       </div>
 
                       <div>
-                        <p className="text-xs text-foreground-muted">Waiting</p>
+                        <p className="text-xs text-foreground-muted">
+                          {t("waiting")}
+                        </p>
 
                         <p className="mt-1 text-sm font-semibold text-warning">
-                          {item.waitMinutes} min
+                          {t("waitMinutes", {minutes: item.waitMinutes})}
                         </p>
                       </div>
 
@@ -197,13 +251,13 @@ export function QueueBoard() {
                         size="sm"
                         onClick={() => updateStatus(item.id, "called")}
                       >
-                        Call
+                        {t("call")}
                       </Button>
 
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={`More actions for ${item.ticket}`}
+                        aria-label={t("moreActions", {ticket: item.ticket})}
                       >
                         <MoreHorizontal className="size-4" />
                       </Button>
@@ -218,11 +272,11 @@ export function QueueBoard() {
                 </div>
 
                 <p className="mt-4 font-semibold text-foreground">
-                  No customers waiting
+                  {t("noCustomersWaiting")}
                 </p>
 
                 <p className="mt-1 text-sm text-foreground-muted">
-                  The waiting queue is currently empty.
+                  {t("emptyQueue")}
                 </p>
               </div>
             )}
@@ -231,10 +285,10 @@ export function QueueBoard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Current service</CardTitle>
+            <CardTitle>{t("currentService")}</CardTitle>
 
             <CardDescription>
-              Called customers and active stations
+              {t("calledCustomersAndActiveStations")}
             </CardDescription>
           </CardHeader>
 
@@ -268,7 +322,7 @@ export function QueueBoard() {
                   {item.employee ? (
                     <div className="mt-4 rounded-lg bg-surface-muted px-3 py-2">
                       <p className="text-xs text-foreground-muted">
-                        Assigned professional
+                        {t("assignedProfessional")}
                       </p>
 
                       <p className="mt-1 text-sm font-medium text-foreground">
@@ -285,7 +339,7 @@ export function QueueBoard() {
                           onClick={() => updateStatus(item.id, "inService")}
                         >
                           <Play className="size-4" />
-                          Start service
+                          {t("startService")}
                         </Button>
 
                         <Button
@@ -294,7 +348,7 @@ export function QueueBoard() {
                           onClick={() => updateStatus(item.id, "absent")}
                         >
                           <X className="size-4" />
-                          Absent
+                          {t("absent")}
                         </Button>
                       </>
                     ) : null}
@@ -305,7 +359,7 @@ export function QueueBoard() {
                         onClick={() => updateStatus(item.id, "completed")}
                       >
                         <Check className="size-4" />
-                        Finish service
+                        {t("finishService")}
                       </Button>
                     ) : null}
                   </div>
@@ -319,19 +373,23 @@ export function QueueBoard() {
       <Card>
         <CardHeader className="flex-row items-start justify-between gap-4">
           <div>
-            <CardTitle>Queue operations</CardTitle>
+            <CardTitle>{t("queueOperations")}</CardTitle>
 
             <CardDescription>
-              Manage walk-ins and public queue information
+              {t("queueOperationsDescription")}
             </CardDescription>
           </div>
         </CardHeader>
 
         <CardContent>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <Button className="justify-start" variant="outline">
+            <Button
+              className="justify-start"
+              variant="outline"
+              onClick={() => onWalkInPanelOpenChange(true)}
+            >
               <Plus className="size-4" />
-              Add walk-in customer
+              {t("addWalkInCustomer")}
             </Button>
 
             <Link
@@ -345,16 +403,23 @@ export function QueueBoard() {
                 "
             >
               <Monitor className="size-4" />
-              Open public display
+              {t("openPublicDisplay")}
             </Link>
 
             <Button className="justify-start" variant="outline">
               <UserRoundCheck className="size-4" />
-              Manage service stations
+              {t("manageStations")}
             </Button>
           </div>
         </CardContent>
       </Card>
+
+      <AddWalkInPanel
+        open={isWalkInPanelOpen}
+        nextTicket={nextTicket}
+        onClose={() => onWalkInPanelOpenChange(false)}
+        onAdd={addWalkIn}
+      />
     </div>
   );
 }

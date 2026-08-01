@@ -1,18 +1,16 @@
+import { ReportsBoard } from "@/components/business/reports-board";
 import { Topbar } from "@/components/layout/topbar";
-import { getTranslations } from "next-intl/server";
 
-export default async function CustomersPage() {
-  const home = await getTranslations("home");
-
+export default function ReportsPage() {
   return (
     <>
       <Topbar
-        title={home("title")}
-        subtitle={home("subtitle")}
+        title="Reports"
+        subtitle="Analyze demand, revenue and business performance"
       />
 
-      <main className="flex-1 p-6">
-        Próximamente...
+      <main className="flex-1 p-4 md:p-6 lg:p-8">
+        <ReportsBoard />
       </main>
     </>
   );

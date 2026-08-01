@@ -5,7 +5,6 @@ import {
   Clock3,
   ListOrdered,
   Plus,
-  UserRoundPlus,
 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
@@ -20,6 +19,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Globe } from "lucide-react";
+import Link from "next/link";
 
 const upcomingAppointments = [
   {
@@ -67,24 +68,33 @@ const queueItems = [
 ];
 
 export default async function DashboardPage() {
-  const home = await getTranslations("home");
+  const t = await getTranslations("dashboard");
 
   return (
     <>
       <Topbar
-        title={home("title")}
-        subtitle={home("subtitle")}
+        title={t("title")}
+        subtitle={t("subtitle")}
         actions={
           <>
-            <Button variant="outline">
-              <UserRoundPlus className="size-4" />
-              New walk-in
-            </Button>
-
             <Button>
               <Plus className="size-4" />
               New appointment
             </Button>
+            <Button variant="outline">
+              <Link
+                href="/booking"
+                target="_blank"
+                className="flex w-fit items-center gap-2"
+              >
+                <Globe className="size-4" />
+                View booking site
+              </Link>
+            </Button>
+            {/* <Button variant="outline">
+              <UserRoundPlus className="size-4" />
+              New walk-in
+            </Button> */}
           </>
         }
       />
@@ -186,14 +196,10 @@ export default async function DashboardPage() {
               <CardHeader className="flex-row items-start justify-between gap-4">
                 <div>
                   <CardTitle>Live queue</CardTitle>
-                  <CardDescription>
-                    Customers currently waiting
-                  </CardDescription>
+                  <CardDescription>Customers currently waiting</CardDescription>
                 </div>
 
-                <Badge variant="warning">
-                  {queueItems.length} waiting
-                </Badge>
+                <Badge variant="warning">{queueItems.length} waiting</Badge>
               </CardHeader>
 
               <CardContent>
@@ -224,10 +230,7 @@ export default async function DashboardPage() {
                   ))}
                 </div>
 
-                <Button
-                  variant="outline"
-                  className="mt-4 w-full"
-                >
+                <Button variant="outline" className="mt-4 w-full">
                   Open queue
                 </Button>
               </CardContent>

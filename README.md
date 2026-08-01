@@ -1,36 +1,227 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Turnix
 
-## Getting Started
+Turnix es una plataforma SaaS para negocios de servicios que centraliza:
 
-First, run the development server:
+- 📅 Online appointments
+- 🎟️ Queue management
+- 💳 Payments
+- 📊 Business reports
+
+Actualmente el proyecto corresponde al MVP Frontend desarrollado con datos simulados (mock data).
+
+---
+
+# Technology Stack
+
+- Next.js 16 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS
+- next-intl
+- Prisma (próximamente)
+- SQLite (desarrollo)
+- PostgreSQL (producción)
+
+---
+
+# Getting Started
+
+Instalar dependencias:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Iniciar el proyecto:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Abrir:
 
-## Learn More
+```
+http://localhost:3000
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Current Modules
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Administration
 
-## Deploy on Vercel
+```
+Dashboard
+Appointments
+Queue
+Customers
+Services
+Employees
+Payments
+Reports
+Settings
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Public
+
+```
+Booking Landing
+```
+
+Ruta:
+
+```
+http://localhost:3000/booking
+```
+
+---
+
+# Public Booking Landing
+
+La Landing pública permite a un cliente:
+
+- Ver información del negocio
+- Consultar los servicios disponibles
+- Elegir un profesional (opcional)
+- Seleccionar fecha y hora
+- Registrar sus datos
+- Confirmar una cita
+
+Actualmente todo funciona con datos simulados.
+
+---
+
+# Folder Structure
+
+```
+src
+│
+├── app
+│   ├── (dashboard)
+│   └── booking
+│
+├── components
+│   ├── business
+│   ├── public
+│   ├── layout
+│   ├── shared
+│   └── ui
+│
+├── config
+├── hooks
+├── lib
+├── mocks
+├── providers
+├── styles
+└── types
+```
+
+---
+
+# Internationalization
+
+Idiomas soportados:
+
+- English
+- Español
+
+Los textos se encuentran en:
+
+```
+messages/
+    en.json
+    es.json
+```
+
+Cuando se agregan nuevos módulos se deben incluir las traducciones correspondientes en ambos archivos.
+
+---
+
+# Mock Data
+
+Mientras se desarrolla el backend, toda la aplicación utiliza información simulada ubicada en:
+
+```
+src/mocks
+```
+
+Posteriormente estos archivos serán reemplazados por llamadas a la API.
+
+---
+
+# Roadmap
+
+## Phase 1
+
+- ✅ Dashboard
+- ✅ Appointments
+- ✅ Queue
+- ✅ Customers
+- ✅ Services
+- ✅ Employees
+- ✅ Payments
+- ✅ Reports
+- ✅ Settings
+- ✅ Booking Landing
+
+## Phase 2
+
+- Backend
+- Authentication
+- Prisma
+- Database
+- REST API
+
+## Phase 3
+
+- Online Payments
+- Email Notifications
+- SMS Notifications
+- Customer Portal
+- Calendar Integration
+
+---
+
+# Development
+
+Para agregar un nuevo módulo:
+
+1. Crear la página en:
+
+```
+src/app/(dashboard)
+```
+
+2. Crear el componente correspondiente en:
+
+```
+src/components/business
+```
+
+3. Crear los mocks necesarios en:
+
+```
+src/mocks
+```
+
+4. Agregar traducciones en:
+
+```
+messages/en.json
+messages/es.json
+```
+
+5. Registrar el módulo en:
+
+```
+config/navigation.ts
+```
+
+---
+
+# License
+
+Copyright © Turnix.
+All rights reserved.

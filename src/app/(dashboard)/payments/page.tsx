@@ -1,4 +1,4 @@
-import { Download, Plus } from "lucide-react";
+import { Download } from "lucide-react";
 
 import { PaymentsBoard } from "@/components/business/payments-board";
 import { Topbar } from "@/components/layout/topbar";
@@ -17,10 +17,10 @@ export default function PaymentsPage() {
               Export
             </Button>
 
-            <Button>
+            {/* <Button>
               <Plus className="size-4" />
               New payment
-            </Button>
+            </Button> */}
           </>
         }
       />
