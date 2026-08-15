@@ -20,23 +20,25 @@ import {
 } from "@/components/ui/card";
 import { appointments } from "@/mocks/appointments";
 import { NewAppointmentPanel } from "@/components/business/new-appointment-panel";
+import { getTranslations } from "next-intl/server";
 
-const dayFilters = [
-  { label: "Today", active: true },
-  { label: "Tomorrow", active: false },
-  { label: "This week", active: false },
-];
-
-export default function AppointmentsPage() {
+export default async function AppointmentsPage() {
+  const t = await getTranslations("appointments");
+  const common = await getTranslations("common");
+  const dayFilters = [
+    { label: t("today"), active: true },
+    { label: t("tomorrow"), active: false },
+    { label: t("thisWeek"), active: false },
+  ];
   return (
     <>
       <Topbar
-        title="Appointments"
-        subtitle="Manage reservations and scheduled services"
+        title={t("title")}
+        subtitle={t("subtitle")}
         actions={<NewAppointmentPanel />}
       />
 
-      <main className="flex-1 p-4 md:p-6 lg:p-8">
+      <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-6">
           <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 shadow-(--shadow-sm)">
             <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
@@ -61,7 +63,7 @@ export default function AppointmentsPage() {
 
                   <input
                     type="search"
-                    placeholder="Search customer..."
+                    placeholder={t("searchPlaceholder")}
                     className="
                       h-10 w-full rounded-lg border border-border
                       bg-background pl-9 pr-3 text-sm text-foreground
@@ -75,7 +77,7 @@ export default function AppointmentsPage() {
 
                 <Button variant="outline">
                   <Filter className="size-4" />
-                  Filters
+                  {t("filters")}
                 </Button>
               </div>
             </div>
@@ -88,11 +90,11 @@ export default function AppointmentsPage() {
 
                 <div>
                   <p className="font-semibold text-foreground">
-                    Wednesday, July 29
+                    {t("selectedDate")}
                   </p>
 
                   <p className="text-sm text-foreground-muted">
-                    6 appointments scheduled
+                    {t("scheduledCount", { count: 6 })}
                   </p>
                 </div>
               </div>
@@ -101,19 +103,19 @@ export default function AppointmentsPage() {
                 <Button
                   variant="outline"
                   size="icon"
-                  aria-label="Previous day"
+                  aria-label={t("previousDay")}
                 >
                   <ChevronLeft className="size-4" />
                 </Button>
 
                 <Button variant="outline" size="sm">
-                  Today
+                  {t("today")}
                 </Button>
 
                 <Button
                   variant="outline"
                   size="icon"
-                  aria-label="Next day"
+                  aria-label={t("nextDay")}
                 >
                   <ChevronRight className="size-4" />
                 </Button>
@@ -123,10 +125,10 @@ export default function AppointmentsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Daily schedule</CardTitle>
+              <CardTitle>{t("dailySchedule")}</CardTitle>
 
               <CardDescription>
-                Appointments organized by time and service professional
+                {t("scheduleDescription")}
               </CardDescription>
             </CardHeader>
 
@@ -136,31 +138,31 @@ export default function AppointmentsPage() {
                   <thead>
                     <tr className="border-b border-border text-left">
                       <th className="pb-3 pr-4 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                        Time
+                        {common("time")}
                       </th>
 
                       <th className="px-4 pb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                        Customer
+                        {common("customer")}
                       </th>
 
                       <th className="px-4 pb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                        Service
+                        {common("service")}
                       </th>
 
                       <th className="px-4 pb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                        Professional
+                        {common("professional")}
                       </th>
 
                       <th className="px-4 pb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                        Status
+                        {common("status")}
                       </th>
 
                       <th className="px-4 pb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                        Price
+                        {common("price")}
                       </th>
 
                       <th className="pb-3 pl-4 text-right text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                        Actions
+                        {common("actions")}
                       </th>
                     </tr>
                   </thead>
@@ -219,7 +221,7 @@ export default function AppointmentsPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            aria-label={`Actions for ${appointment.customer}`}
+                            aria-label={t("actionsFor", { customer: appointment.customer })}
                           >
                             <MoreHorizontal className="size-4" />
                           </Button>

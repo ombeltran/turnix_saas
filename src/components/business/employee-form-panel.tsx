@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type SubmitEvent } from "react";
+import { useTranslations } from "next-intl";
 
 import { SidePanel } from "@/components/shared/side-panel";
 import { Button } from "@/components/ui/button";
@@ -26,27 +27,29 @@ export function EmployeeFormPanel({
   onClose,
   onSave,
 }: EmployeeFormPanelProps) {
+  const t = useTranslations("employees");
+  const common = useTranslations("common");
   const isEditing = employee !== null;
 
   return (
     <SidePanel
       open={open}
-      title={isEditing ? "Edit employee" : "Add employee"}
+      title={isEditing ? t("editEmployee") : t("addEmployee")}
       subtitle={
         isEditing
-          ? "Update employee details, services and queue station."
-          : "Add a team member and connect them to services and turns."
+          ? t("editDescription")
+          : t("createDescription")
       }
       size="md"
       onClose={onClose}
       footer={
         <div className="flex w-full justify-end gap-3">
           <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
+            {common("cancel")}
           </Button>
 
           <Button type="submit" form={formId}>
-            {isEditing ? "Save changes" : "Add employee"}
+            {isEditing ? common("saveChanges") : t("addEmployee")}
           </Button>
         </div>
       }
@@ -74,6 +77,8 @@ function EmployeeFormContent({
   onClose,
   onSave,
 }: EmployeeFormContentProps) {
+  const t = useTranslations("employees");
+  const common = useTranslations("common");
   const [name, setName] = useState(employee?.name ?? "");
   const [role, setRole] = useState(employee?.role ?? "");
   const [email, setEmail] = useState(employee?.email ?? "");
@@ -117,7 +122,7 @@ function EmployeeFormContent({
     onSave({
       id: employee?.id ?? `EMP-${Date.now()}`,
       name: trimmedName,
-      role: role.trim() || "Team member",
+      role: role.trim() || t("teamMember"),
       email: email.trim(),
       phone: phone.trim(),
       initials,
@@ -134,62 +139,62 @@ function EmployeeFormContent({
 
   return (
     <form id={formId} className="space-y-6" onSubmit={handleSubmit}>
-      <FormField label="Full name" required>
+      <FormField label={t("fullName")} required>
         <input
           value={name}
           onChange={(event) => setName(event.target.value)}
-          placeholder="Employee name"
+          placeholder={t("namePlaceholder")}
           className={inputClassName}
           required
         />
       </FormField>
 
-      <FormField label="Role">
+      <FormField label={t("role")}>
         <input
           value={role}
           onChange={(event) => setRole(event.target.value)}
-          placeholder="Senior stylist, barber..."
+          placeholder={t("rolePlaceholder")}
           className={inputClassName}
         />
       </FormField>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <FormField label="Email">
+        <FormField label={t("email")}>
           <input
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            placeholder="name@business.com"
+            placeholder={t("emailPlaceholder")}
             className={inputClassName}
           />
         </FormField>
 
-        <FormField label="Phone">
+        <FormField label={t("phone")}>
           <input
             value={phone}
             onChange={(event) => setPhone(event.target.value)}
-            placeholder="(201) 555-0100"
+            placeholder={t("phonePlaceholder")}
             className={inputClassName}
           />
         </FormField>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <FormField label="Queue station">
+        <FormField label={t("queueStation")}>
           <select
             value={station}
             onChange={(event) => setStation(event.target.value)}
             className={inputClassName}
           >
-            <option>Station 1</option>
-            <option>Station 2</option>
-            <option>Station 3</option>
-            <option>Station 4</option>
-            <option>Floating</option>
+            <option value="Station 1">{t("station", { number: 1 })}</option>
+            <option value="Station 2">{t("station", { number: 2 })}</option>
+            <option value="Station 3">{t("station", { number: 3 })}</option>
+            <option value="Station 4">{t("station", { number: 4 })}</option>
+            <option value="Floating">{t("floating")}</option>
           </select>
         </FormField>
 
-        <FormField label="Status">
+        <FormField label={t("status")}>
           <select
             value={status}
             onChange={(event) =>
@@ -197,18 +202,18 @@ function EmployeeFormContent({
             }
             className={inputClassName}
           >
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
+            <option value="active">{common("active")}</option>
+            <option value="inactive">{common("inactive")}</option>
           </select>
         </FormField>
       </div>
 
       <fieldset>
         <legend className="text-sm font-medium text-foreground">
-          Assigned services
+          {t("assignedServices")}
         </legend>
         <p className="mt-1 text-xs text-foreground-muted">
-          Only matching services should be assigned to this employee in appointments and turns.
+          {t("assignedServicesDescription")}
         </p>
 
         <div className="mt-3 grid gap-2">

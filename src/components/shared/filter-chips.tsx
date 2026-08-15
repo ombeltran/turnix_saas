@@ -28,7 +28,7 @@ export function FilterChips<T extends string = string>({
       role="group"
       aria-label={ariaLabel}
       className={cn(
-        "flex w-fit flex-wrap items-center gap-1 rounded-lg border border-border bg-surface p-1",
+        "flex w-full max-w-full flex-nowrap items-center gap-1 overflow-x-auto rounded-lg border border-border bg-surface p-1 sm:w-fit sm:flex-wrap",
         className
       )}
     >
@@ -43,7 +43,7 @@ export function FilterChips<T extends string = string>({
             aria-pressed={isActive}
             onClick={() => onChange(option.value)}
             className={cn(
-              "inline-flex h-8 items-center justify-center rounded-md px-3 text-sm font-medium",
+              "inline-flex h-8 shrink-0 items-center justify-center rounded-md px-3 text-sm font-medium",
               "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
               "disabled:pointer-events-none disabled:opacity-50",
               isActive

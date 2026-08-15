@@ -164,7 +164,7 @@ export function QueueBoard({
 
       <section className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
         <Card>
-          <CardHeader className="flex-row items-start justify-between gap-4">
+          <CardHeader className="items-start justify-between gap-4 sm:flex-row">
             <div>
               <CardTitle>{t("waitingQueue")}</CardTitle>
 
@@ -176,7 +176,7 @@ export function QueueBoard({
               disabled={waitingCustomers.length === 0}
             >
               <SkipForward className="size-4" />
-              {t("CallNext")}
+              {t("callNext")}
             </Button>
           </CardHeader>
 
@@ -371,7 +371,7 @@ export function QueueBoard({
       </section>
 
       <Card>
-        <CardHeader className="flex-row items-start justify-between gap-4">
+        <CardHeader className="items-start justify-between gap-4 sm:flex-row">
           <div>
             <CardTitle>{t("queueOperations")}</CardTitle>
 

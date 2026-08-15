@@ -2,7 +2,7 @@
 
 import { Check, ChevronDown, Languages } from "lucide-react";
 import { setLocale } from "@/actions/set-locale";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
@@ -22,6 +22,7 @@ const languages = [
 type Locale = (typeof languages)[number]["locale"];
 
 export function LanguageSelector() {
+  const t = useTranslations("language");
   const locale = useLocale() as Locale;
   const router = useRouter();
 
@@ -49,7 +50,7 @@ export function LanguageSelector() {
     <div className="relative">
       <button
         type="button"
-        aria-label="Seleccionar idioma"
+        aria-label={t("select")}
         aria-haspopup="menu"
         aria-expanded={isOpen}
         disabled={isPending}
@@ -109,7 +110,9 @@ export function LanguageSelector() {
                   focus-visible:bg-surface-hover
                 "
               >
-                <span>{language.label}</span>
+                <span>
+                  {language.locale === "es" ? t("spanish") : t("english")}
+                </span>
 
                 {isSelected && (
                   <Check className="size-4 text-primary" aria-hidden="true" />

@@ -32,7 +32,11 @@ export function SectionHeader({
         ) : null}
       </div>
 
-      {action ? <div className="shrink-0">{action}</div> : null}
+      {action ? (
+        <div className="shrink-0 [&>button]:w-full sm:[&>button]:w-auto">
+          {action}
+        </div>
+      ) : null}
     </div>
   );
 }

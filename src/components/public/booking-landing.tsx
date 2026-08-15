@@ -1,6 +1,12 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+  type FormEvent,
+} from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -23,6 +29,10 @@ import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import {
+  readBusinessBranding,
+  readBusinessProfile,
+} from "@/lib/business-branding-storage";
 import { employees } from "@/mocks/employees";
 import {
   bookingDates,
@@ -30,6 +40,16 @@ import {
   publicBusiness,
 } from "@/mocks/public-booking";
 import { services } from "@/mocks/services";
+import { readServices } from "@/lib/service-storage";
+import type { Service } from "@/mocks/services";
+import {
+  initialBusinessSettings,
+  type BusinessSettings,
+} from "@/mocks/settings";
+import {
+  defaultBusinessBranding,
+  type BusinessBranding,
+} from "@/types/business-branding";
 
 type BookingStep = 1 | 2 | 3 | 4;
 
@@ -59,9 +79,10 @@ export function BookingLanding() {
   const t = useTranslations("booking");
   const common = useTranslations("common");
 
+  const [serviceList, setServiceList] = useState<Service[]>(services);
   const activeServices = useMemo(
-    () => services.filter((service) => service.status === "active"),
-    [],
+    () => serviceList.filter((service) => service.status === "active"),
+    [serviceList],
   );
 
   const [step, setStep] = useState<BookingStep>(1);
@@ -76,6 +97,29 @@ export function BookingLanding() {
     notes: "",
   });
   const [confirmed, setConfirmed] = useState(false);
+  const [branding, setBranding] = useState<BusinessBranding>(
+    defaultBusinessBranding,
+  );
+  const [businessProfile, setBusinessProfile] = useState<BusinessSettings>(
+    initialBusinessSettings,
+  );
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setBranding(readBusinessBranding());
+      setBusinessProfile(readBusinessProfile());
+      setServiceList(readServices());
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
+
+  const brandingStyles = {
+    "--primary": branding.primaryColor,
+    "--primary-hover": branding.primaryColor,
+    "--primary-foreground": branding.buttonTextColor,
+    "--info-background": branding.secondaryColor,
+  } as CSSProperties;
 
   const selectedService = activeServices.find(
     (service) => service.id === selectedServiceId,
@@ -128,16 +172,32 @@ export function BookingLanding() {
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main
+      className="min-h-screen bg-background text-foreground"
+      style={brandingStyles}
+    >
       <header className="sticky top-0 z-40 border-b border-border bg-surface/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <a href="#top" className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-xl bg-primary font-semibold text-primary-foreground">
-              {publicBusiness.initials}
-            </span>
-            <span>
+            {branding.logoUrl ? (
+              <img
+                src={branding.logoUrl}
+                alt={`${businessProfile.name} logo`}
+                className="size-10 rounded-xl border border-border object-cover"
+              />
+            ) : (
+              <span className="flex size-10 items-center justify-center rounded-xl bg-primary font-semibold text-primary-foreground">
+                {businessProfile.name
+                  .split(" ")
+                  .map((word) => word[0])
+                  .join("")
+                  .slice(0, 2)
+                  .toUpperCase()}
+              </span>
+            )}
+            <span className="hidden sm:block">
               <span className="block text-sm font-semibold text-foreground">
-                {publicBusiness.name}
+                {businessProfile.name}
               </span>
               <span className="block text-xs text-foreground-muted">
                 {t("brandTagline")}
@@ -154,52 +214,53 @@ export function BookingLanding() {
 
       <section
         id="top"
-        className="relative overflow-hidden border-b border-border"
+        className="relative overflow-hidden border-b border-border bg-cover bg-center"
+        style={{ backgroundImage: `url(${branding.heroImageUrl})` }}
       >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--surface-hover),transparent_45%)]" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/60 to-black/35" />
         <div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-24">
           <div className="flex flex-col justify-center">
-            <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-sm font-medium text-foreground-muted shadow-(--shadow-sm)">
-              <Sparkles className="size-4 text-primary" />
+            <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-white/25 bg-black/20 px-3 py-1.5 text-sm font-medium text-white/85 shadow-(--shadow-sm) backdrop-blur">
+              <Sparkles className="size-4 text-white" />
               {t("eyebrow")}
             </div>
 
-            <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              {t("heroTitle")}
+            <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
+              {branding.heroTitle}
             </h1>
 
-            <p className="mt-5 max-w-2xl text-base leading-7 text-foreground-muted sm:text-lg">
-              {t("heroDescription")}
+            <p className="mt-5 max-w-2xl text-base leading-7 text-white/80 sm:text-lg">
+              {branding.heroDescription}
             </p>
 
             <div className="mt-7 flex flex-wrap gap-3">
               <a
                 href="#booking"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-primary px-5 text-base font-medium text-primary-foreground transition hover:bg-primary-hover"
+                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary px-5 text-base font-medium text-primary-foreground transition hover:bg-primary-hover sm:w-auto"
               >
                 <CalendarDays className="size-5" />
-                {t("bookNow")}
+                {branding.bookingButtonLabel}
               </a>
 
               <a
                 href="#services"
-                className="inline-flex h-12 items-center justify-center rounded-lg border border-border-strong bg-surface px-5 text-base font-medium text-foreground transition hover:bg-surface-hover"
+                className="inline-flex h-12 w-full items-center justify-center rounded-lg border border-white/35 bg-white/10 px-5 text-base font-medium text-white backdrop-blur transition hover:bg-white/20 sm:w-auto"
               >
                 {t("viewServices")}
               </a>
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-foreground-muted">
+            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-white/75">
               <span className="flex items-center gap-2">
-                <CheckCircle2 className="size-4 text-success" />
+                <CheckCircle2 className="size-4 text-white" />
                 {t("instantConfirmation")}
               </span>
               <span className="flex items-center gap-2">
-                <CheckCircle2 className="size-4 text-success" />
+                <CheckCircle2 className="size-4 text-white" />
                 {t("chooseProfessional")}
               </span>
               <span className="flex items-center gap-2">
-                <CheckCircle2 className="size-4 text-success" />
+                <CheckCircle2 className="size-4 text-white" />
                 {t("noAccountRequired")}
               </span>
             </div>
@@ -213,7 +274,7 @@ export function BookingLanding() {
                     {t("todayAt")}
                   </p>
                   <h2 className="mt-1 text-2xl font-semibold">
-                    {publicBusiness.name}
+                    {businessProfile.name}
                   </h2>
                 </div>
                 <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">
@@ -234,7 +295,9 @@ export function BookingLanding() {
                   <p className="mt-3 text-xs text-primary-foreground/70">
                     {t("location")}
                   </p>
-                  <p className="mt-1 font-semibold">Carteret, NJ</p>
+                  <p className="mt-1 font-semibold">
+                    {businessProfile.address}
+                  </p>
                 </div>
               </div>
             </div>
@@ -288,6 +351,13 @@ export function BookingLanding() {
 
             return (
               <Card key={service.id} className="p-5 transition hover:-translate-y-0.5 hover:shadow-(--shadow-md)">
+                {branding.showServiceImages && service.imageUrl ? (
+                  <img
+                    src={service.imageUrl}
+                    alt=""
+                    className="mb-5 h-36 w-full rounded-xl object-cover"
+                  />
+                ) : null}
                 <div className="flex size-11 items-center justify-center rounded-xl bg-info-background text-info">
                   <Icon className="size-5" />
                 </div>
@@ -743,6 +813,7 @@ export function BookingLanding() {
         </div>
       </section>
 
+      {branding.showContactSection ? (
       <section className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_0.8fr] lg:px-8">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-primary">
@@ -763,7 +834,7 @@ export function BookingLanding() {
                   {t("address")}
                 </p>
                 <p className="mt-1 text-sm text-foreground-muted">
-                  {publicBusiness.address}
+                  {businessProfile.address}
                 </p>
               </div>
             </div>
@@ -785,7 +856,7 @@ export function BookingLanding() {
                   {t("phone")}
                 </p>
                 <p className="mt-1 text-sm text-foreground-muted">
-                  {publicBusiness.phone}
+                  {businessProfile.phone}
                 </p>
               </div>
             </div>
@@ -796,7 +867,7 @@ export function BookingLanding() {
                   {t("email")}
                 </p>
                 <p className="mt-1 text-sm text-foreground-muted">
-                  {publicBusiness.email}
+                  {businessProfile.email}
                 </p>
               </div>
             </div>
@@ -808,10 +879,10 @@ export function BookingLanding() {
             <div>
               <MapPin className="mx-auto size-10 text-primary" />
               <p className="mt-4 font-semibold text-foreground">
-                {publicBusiness.name}
+                {businessProfile.name}
               </p>
               <p className="mt-2 text-sm text-foreground-muted">
-                {publicBusiness.address}
+                {businessProfile.address}
               </p>
               <Button variant="outline" className="mt-5">
                 {t("getDirections")}
@@ -820,10 +891,11 @@ export function BookingLanding() {
           </div>
         </div>
       </section>
+      ) : null}
 
       <footer className="border-t border-border bg-surface">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-sm text-foreground-muted sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <p>© 2026 {publicBusiness.name}. {t("rightsReserved")}</p>
+          <p>© 2026 {businessProfile.name}. {t("rightsReserved")}</p>
           <p>{t("poweredBy")}</p>
         </div>
       </footer>

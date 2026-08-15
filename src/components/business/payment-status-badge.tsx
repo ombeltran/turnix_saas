@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import type { PaymentStatus } from "@/mocks/payments";
+import { useTranslations } from "next-intl";
 
 type PaymentStatusBadgeProps = {
   status: PaymentStatus;
@@ -7,15 +8,12 @@ type PaymentStatusBadgeProps = {
 
 const statusConfig = {
   pending: {
-    label: "Pending",
     variant: "warning" as const,
   },
   completed: {
-    label: "Completed",
     variant: "success" as const,
   },
   refunded: {
-    label: "Refunded",
     variant: "danger" as const,
   },
 };
@@ -23,11 +21,12 @@ const statusConfig = {
 export function PaymentStatusBadge({
   status,
 }: PaymentStatusBadgeProps) {
+  const t = useTranslations("payments");
   const config = statusConfig[status];
 
   return (
     <Badge variant={config.variant}>
-      {config.label}
+      {t(status)}
     </Badge>
   );
 }

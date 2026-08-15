@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 
 import { LanguageSelector } from "@/components/shared/language-selector";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
@@ -14,22 +15,23 @@ export function Topbar({
   subtitle,
   actions,
 }: TopbarProps) {
+  const common = useTranslations("common");
   return (
     <header className="border-b border-border bg-surface">
-      <div className="flex min-h-16 items-center justify-between gap-4 px-4 py-3 md:px-6">
-        <div className="min-w-0">
+      <div className="flex min-h-16 flex-wrap items-center justify-between gap-3 px-4 py-3 md:px-6">
+        <div className="min-w-0 flex-1 basis-40">
           <h1 className="truncate text-xl font-semibold tracking-tight text-foreground">
             {title}
           </h1>
 
           {subtitle ? (
-            <p className="mt-0.5 truncate text-sm text-foreground-muted">
+            <p className="mt-0.5 line-clamp-2 text-sm text-foreground-muted sm:truncate">
               {subtitle}
             </p>
           ) : null}
         </div>
 
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           {actions ? (
             <div className="hidden items-center gap-2 sm:flex">
               {actions}
@@ -41,7 +43,7 @@ export function Topbar({
 
           <button
             type="button"
-            aria-label="Abrir menú de usuario"
+            aria-label={common("userMenu")}
             className="
               flex size-10 items-center justify-center
               rounded-full border border-border
@@ -61,7 +63,7 @@ export function Topbar({
       </div>
 
       {actions ? (
-        <div className="flex items-center gap-2 border-t border-border px-4 py-3 sm:hidden">
+        <div className="flex items-center gap-2 overflow-x-auto border-t border-border px-4 py-3 sm:hidden [&>*]:shrink-0">
           {actions}
         </div>
       ) : null}

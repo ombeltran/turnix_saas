@@ -42,7 +42,7 @@ export function ThemeToggle() {
     return (
       <div
         aria-hidden="true"
-        className="h-10 w-61 rounded-lg bg-surface-muted"
+        className="h-10 w-22 rounded-lg bg-surface-muted lg:w-61"
       />
     );
   }
@@ -73,7 +73,7 @@ export function ThemeToggle() {
           >
             <Icon className="size-4" />
 
-            <span>{t(option.translationKey)}</span>
+            <span className="hidden lg:inline">{t(option.translationKey)}</span>
           </Button>
         );
       })}

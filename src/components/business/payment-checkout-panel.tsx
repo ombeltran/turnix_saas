@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Banknote,
   CheckCircle2,
@@ -33,6 +34,8 @@ export function PaymentCheckoutPanel({
   onClose,
   onComplete,
 }: PaymentCheckoutPanelProps) {
+  const t = useTranslations("payments");
+  const common = useTranslations("common");
   const [tipPercentage, setTipPercentage] =
     useState(0);
 
@@ -96,14 +99,14 @@ export function PaymentCheckoutPanel({
       open={payment !== null}
       title={
         isCompleted
-          ? "Payment completed"
-          : "Process payment"
+          ? t("paymentCompleted")
+          : t("processPayment")
       }
       subtitle={
         payment
           ? isCompleted
-            ? `Receipt for ${payment.customer}`
-            : `Complete the transaction for ${payment.customer}.`
+            ? t("receiptFor", { customer: payment.customer })
+            : t("completeFor", { customer: payment.customer })
           : undefined
       }
       size="md"
@@ -115,7 +118,7 @@ export function PaymentCheckoutPanel({
               type="button"
               onClick={handleClose}
             >
-              Done
+              {t("done")}
             </Button>
           ) : (
             <>
@@ -124,14 +127,14 @@ export function PaymentCheckoutPanel({
                 variant="outline"
                 onClick={handleClose}
               >
-                Cancel
+                {common("cancel")}
               </Button>
 
               <Button
                 type="button"
                 onClick={handleConfirmPayment}
               >
-                Confirm ${total.toFixed(2)}
+                {t("confirmAmount", { amount: total.toFixed(2) })}
               </Button>
             </>
           )
@@ -191,6 +194,7 @@ function PaymentCheckoutContent({
   onTipChange,
   onDiscountChange,
 }: PaymentCheckoutContentProps) {
+  const t = useTranslations("payments");
   return (
     <div className="space-y-6">
       <section className="rounded-xl border border-border bg-background p-4">
@@ -204,7 +208,7 @@ function PaymentCheckoutContent({
 
         <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
           <span className="text-sm text-foreground-muted">
-            Service amount
+            {t("serviceAmount")}
           </span>
 
           <span className="font-semibold text-foreground">
@@ -215,10 +219,10 @@ function PaymentCheckoutContent({
 
       <section>
         <h3 className="text-sm font-semibold text-foreground">
-          Tip
+          {t("tip")}
         </h3>
 
-        <div className="mt-3 grid grid-cols-4 gap-2">
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
           {tipOptions.map((percentage) => (
             <button
               key={percentage}
@@ -237,7 +241,7 @@ function PaymentCheckoutContent({
               `}
             >
               {percentage === 0
-                ? "None"
+                ? t("none")
                 : `${percentage}%`}
             </button>
           ))}
@@ -245,7 +249,7 @@ function PaymentCheckoutContent({
 
         <div className="mt-3 flex items-center justify-between rounded-lg bg-surface-muted px-4 py-3">
           <span className="text-sm text-foreground-muted">
-            Tip amount
+            {t("tipAmount")}
           </span>
 
           <span className="font-semibold text-foreground">
@@ -259,7 +263,7 @@ function PaymentCheckoutContent({
           htmlFor="payment-discount"
           className="text-sm font-semibold text-foreground"
         >
-          Discount
+          {t("discount")}
         </label>
 
         <div className="relative mt-3">
@@ -302,12 +306,12 @@ function PaymentCheckoutContent({
 
       <section>
         <h3 className="text-sm font-semibold text-foreground">
-          Payment method
+          {t("paymentMethod")}
         </h3>
 
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           <PaymentMethodButton
-            label="Cash"
+            label={t("cash")}
             icon={Banknote}
             active={method === "cash"}
             onClick={() =>
@@ -316,7 +320,7 @@ function PaymentCheckoutContent({
           />
 
           <PaymentMethodButton
-            label="Card"
+            label={t("card")}
             icon={CreditCard}
             active={method === "card"}
             onClick={() =>
@@ -325,7 +329,7 @@ function PaymentCheckoutContent({
           />
 
           <PaymentMethodButton
-            label="Online"
+            label={t("online")}
             icon={Smartphone}
             active={method === "online"}
             onClick={() =>
@@ -337,23 +341,23 @@ function PaymentCheckoutContent({
 
       <section className="rounded-xl bg-surface-muted p-4">
         <PaymentRow
-          label="Subtotal"
+          label={t("subtotal")}
           value={payment.amount}
         />
 
         <PaymentRow
-          label="Tip"
+          label={t("tip")}
           value={tipAmount}
         />
 
         <PaymentRow
-          label="Discount"
+          label={t("discount")}
           value={-discount}
         />
 
         <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
           <span className="font-semibold text-foreground">
-            Total
+            {t("total")}
           </span>
 
           <span className="text-2xl font-bold text-foreground">
@@ -376,6 +380,7 @@ function PaymentConfirmation({
   total,
   method,
 }: PaymentConfirmationProps) {
+  const t = useTranslations("payments");
   return (
     <div className="flex min-h-125 flex-col items-center justify-center p-4 text-center">
       <div className="flex size-16 items-center justify-center rounded-full bg-success-background text-success">
@@ -383,17 +388,16 @@ function PaymentConfirmation({
       </div>
 
       <h3 className="mt-5 text-xl font-semibold text-foreground">
-        Payment completed
+        {t("paymentCompleted")}
       </h3>
 
       <p className="mt-2 max-w-sm text-sm leading-6 text-foreground-muted">
-        The payment for {customer} was processed
-        successfully.
+        {t("paymentSuccess", { customer })}
       </p>
 
-      <div className="mt-6 rounded-xl border border-border bg-background px-8 py-5">
+      <div className="mt-6 w-full max-w-sm rounded-xl border border-border bg-background px-4 py-5 sm:px-8">
         <p className="text-sm text-foreground-muted">
-          Amount paid
+          {t("amountPaid")}
         </p>
 
         <p className="mt-1 text-3xl font-bold text-foreground">
@@ -401,7 +405,7 @@ function PaymentConfirmation({
         </p>
 
         <p className="mt-2 text-sm capitalize text-foreground-muted">
-          Paid by {method}
+          {t("paidBy", { method: t(method) })}
         </p>
       </div>
     </div>

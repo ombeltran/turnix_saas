@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { BellRing, Clock3, Monitor, Sparkles, Volume2 } from "lucide-react";
 
 import {
@@ -10,6 +11,8 @@ import {
 } from "@/mocks/public-display";
 
 export function PublicQueueDisplay() {
+  const t = useTranslations("display");
+  const locale = useLocale();
   const [currentTime, setCurrentTime] = useState(() => new Date());
 
   useEffect(() => {
@@ -21,7 +24,7 @@ export function PublicQueueDisplay() {
   }, []);
 
   const formattedTime = currentTime
-    ? new Intl.DateTimeFormat("en-US", {
+    ? new Intl.DateTimeFormat(locale, {
         hour: "numeric",
         minute: "2-digit",
         second: "2-digit",
@@ -29,31 +32,31 @@ export function PublicQueueDisplay() {
     : "--:--:--";
 
   const formattedDate = currentTime
-    ? new Intl.DateTimeFormat("en-US", {
+    ? new Intl.DateTimeFormat(locale, {
         weekday: "long",
         month: "long",
         day: "numeric",
       }).format(currentTime)
-    : "Loading date...";
+    : t("loadingDate");
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <header className="flex items-center justify-between border-b border-border bg-surface px-8 py-5">
+      <header className="flex flex-col gap-4 border-b border-border bg-surface px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8 lg:py-5">
         <div className="flex items-center gap-4">
           <div className="flex size-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <Sparkles className="size-6" />
           </div>
 
           <div>
-            <p className="text-2xl font-bold tracking-tight">Bella Studio</p>
+            <p className="text-2xl font-bold tracking-tight">{t("businessName")}</p>
 
             <p className="text-sm text-foreground-muted">
-              Welcome — we will be with you shortly
+              {t("welcome")}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-right">
+        <div className="flex items-center gap-3 text-left sm:gap-4 sm:text-right">
           <Clock3 className="size-6 text-primary" />
 
           <div>
@@ -66,27 +69,27 @@ export function PublicQueueDisplay() {
         </div>
       </header>
 
-      <div className="grid min-h-[calc(100vh-105px)] gap-6 p-6 xl:grid-cols-[1.3fr_0.7fr]">
+      <div className="grid min-h-[calc(100vh-105px)] gap-4 p-3 sm:gap-6 sm:p-6 xl:grid-cols-[1.3fr_0.7fr]">
         <section className="flex min-h-125 flex-col overflow-hidden rounded-3xl border border-primary/20 bg-primary text-primary-foreground shadow-xl">
-          <div className="flex items-center justify-center gap-3 border-b border-white/20 px-8 py-5">
+          <div className="flex items-center justify-center gap-3 border-b border-white/20 px-4 py-4 sm:px-8 sm:py-5">
             <BellRing className="size-7" />
 
             <p className="text-xl font-semibold uppercase tracking-[0.2em]">
-              Now calling
+              {t("nowCalling")}
             </p>
           </div>
 
-          <div className="flex flex-1 flex-col items-center justify-center px-8 py-12 text-center">
+          <div className="flex flex-1 flex-col items-center justify-center px-4 py-8 text-center sm:px-8 sm:py-12">
             <p className="text-lg font-medium uppercase tracking-[0.25em] text-white/75">
-              Ticket
+              {t("ticket")}
             </p>
 
-            <p className="mt-4 text-[clamp(6rem,18vw,13rem)] font-black leading-none tracking-tight">
+            <p className="mt-4 text-[clamp(3.5rem,18vw,13rem)] font-black leading-none tracking-tight">
               {currentTicket.ticket}
             </p>
 
             <div className="mt-10 rounded-2xl bg-white/15 px-10 py-6 backdrop-blur-sm">
-              <p className="text-lg text-white/75">Please proceed to</p>
+              <p className="text-lg text-white/75">{t("proceedTo")}</p>
 
               <p className="mt-2 text-4xl font-bold">{currentTicket.station}</p>
             </div>
@@ -94,7 +97,7 @@ export function PublicQueueDisplay() {
             <div className="mt-10 flex items-center gap-3 text-lg text-white/80">
               <Volume2 className="size-6" />
 
-              <span>Please have your ticket ready</span>
+              <span>{t("haveTicketReady")}</span>
             </div>
           </div>
         </section>
@@ -103,10 +106,10 @@ export function PublicQueueDisplay() {
           <section className="rounded-3xl border border-border bg-surface p-6 shadow-sm">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-semibold">Up next</h2>
+                <h2 className="text-xl font-semibold">{t("upNext")}</h2>
 
                 <p className="mt-1 text-sm text-foreground-muted">
-                  Please remain near the waiting area
+                  {t("waitingArea")}
                 </p>
               </div>
 
@@ -138,10 +141,10 @@ export function PublicQueueDisplay() {
           <section className="flex-1 rounded-3xl border border-border bg-surface p-6 shadow-sm">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-semibold">In service</h2>
+                <h2 className="text-xl font-semibold">{t("inService")}</h2>
 
                 <p className="mt-1 text-sm text-foreground-muted">
-                  Active service stations
+                  {t("activeStations")}
                 </p>
               </div>
 
@@ -162,13 +165,13 @@ export function PublicQueueDisplay() {
                     </p>
 
                     <p className="mt-1 text-sm text-foreground-muted">
-                      Currently being served
+                      {t("currentlyServed")}
                     </p>
                   </div>
 
                   <div className="rounded-xl bg-surface-muted px-4 py-3 text-right">
                     <p className="text-xs uppercase tracking-wide text-foreground-muted">
-                      Station
+                      {t("station")}
                     </p>
 
                     <p className="mt-1 font-semibold">{item.station}</p>
@@ -180,7 +183,7 @@ export function PublicQueueDisplay() {
 
           <section className="rounded-2xl bg-surface-muted px-6 py-4 text-center">
             <p className="text-sm text-foreground-muted">
-              Thank you for choosing Bella Studio
+              {t("thankYou")}
             </p>
           </section>
         </aside>

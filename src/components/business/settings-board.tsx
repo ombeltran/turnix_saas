@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Bell,
   Building2,
@@ -9,11 +10,13 @@ import {
   Clock3,
   CreditCard,
   Monitor,
+  Palette,
   Save,
   UsersRound,
 } from "lucide-react";
 
 import { SectionHeader } from "@/components/shared/section-header";
+import { LandingPageSettings } from "@/components/business/landing-page-settings";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -35,9 +38,20 @@ import {
   type QueueSettings,
 } from "@/mocks/settings";
 import { cn } from "@/lib/utils";
+import {
+  readBusinessBranding,
+  readBusinessProfile,
+  saveBusinessBranding,
+  saveBusinessProfile,
+} from "@/lib/business-branding-storage";
+import {
+  defaultBusinessBranding,
+  type BusinessBranding,
+} from "@/types/business-branding";
 
 type SettingsSection =
   | "business"
+  | "landing"
   | "hours"
   | "appointments"
   | "queue"
@@ -46,15 +60,16 @@ type SettingsSection =
 
 const sections: {
   id: SettingsSection;
-  label: string;
+  labelKey: "business" | "landing" | "hours" | "appointments" | "queue" | "notifications" | "subscription";
   icon: typeof Building2;
 }[] = [
-  { id: "business", label: "Business", icon: Building2 },
-  { id: "hours", label: "Business hours", icon: Clock3 },
-  { id: "appointments", label: "Appointments", icon: CalendarDays },
-  { id: "queue", label: "Queue", icon: UsersRound },
-  { id: "notifications", label: "Notifications", icon: Bell },
-  { id: "billing", label: "Subscription", icon: CreditCard },
+  { id: "business", labelKey: "business", icon: Building2 },
+  { id: "landing", labelKey: "landing", icon: Palette },
+  { id: "hours", labelKey: "hours", icon: Clock3 },
+  { id: "appointments", labelKey: "appointments", icon: CalendarDays },
+  { id: "queue", labelKey: "queue", icon: UsersRound },
+  { id: "notifications", labelKey: "notifications", icon: Bell },
+  { id: "billing", labelKey: "subscription", icon: CreditCard },
 ];
 
 type SwitchFieldProps = {
@@ -112,10 +127,15 @@ const fieldClassName = `
 `;
 
 export function SettingsBoard() {
+  const t = useTranslations("settings");
+  const common = useTranslations("common");
   const [activeSection, setActiveSection] =
     useState<SettingsSection>("business");
   const [business, setBusiness] = useState<BusinessSettings>(
     initialBusinessSettings,
+  );
+  const [branding, setBranding] = useState<BusinessBranding>(
+    defaultBusinessBranding,
   );
   const [hours, setHours] = useState<BusinessHour[]>(initialBusinessHours);
   const [appointments, setAppointments] =
@@ -126,7 +146,18 @@ export function SettingsBoard() {
     useState<NotificationSettings>(initialNotificationSettings);
   const [saved, setSaved] = useState(false);
 
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setBranding(readBusinessBranding());
+      setBusiness(readBusinessProfile());
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
+
   function saveChanges() {
+    saveBusinessBranding(branding);
+    saveBusinessProfile(business);
     setSaved(true);
     window.setTimeout(() => setSaved(false), 2500);
   }
@@ -149,19 +180,19 @@ export function SettingsBoard() {
   return (
     <div className="space-y-6">
       <SectionHeader
-        title="Business settings"
-        description="Manage how Turnix works for your business and customers."
+        title={t("header")}
+        description={t("headerDescription")}
         action={
           <Button onClick={saveChanges}>
             {saved ? (
               <>
                 <Check className="size-4" />
-                Saved
+                {common("saved")}
               </>
             ) : (
               <>
                 <Save className="size-4" />
-                Save changes
+                {common("saveChanges")}
               </>
             )}
           </Button>
@@ -171,14 +202,14 @@ export function SettingsBoard() {
       {saved ? (
         <div className="flex items-center gap-3 rounded-xl border border-success/30 bg-success-background px-4 py-3 text-sm text-success">
           <Check className="size-5 shrink-0" />
-          Changes saved successfully for this simulated demo.
+          {t("saveSuccess")}
         </div>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-[250px_minmax(0,1fr)]">
-        <Card className="h-fit">
+      <div className="grid min-w-0 gap-6 lg:grid-cols-[250px_minmax(0,1fr)]">
+        <Card className="h-fit overflow-hidden">
           <CardContent className="p-3">
-            <nav className="space-y-1">
+            <nav className="flex gap-1 overflow-x-auto lg:block lg:space-y-1">
               {sections.map((section) => {
                 const Icon = section.icon;
                 const selected = activeSection === section.id;
@@ -189,14 +220,14 @@ export function SettingsBoard() {
                     type="button"
                     onClick={() => setActiveSection(section.id)}
                     className={cn(
-                      "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition",
+                      "flex w-auto shrink-0 items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition lg:w-full",
                       selected
                         ? "bg-primary text-primary-foreground"
                         : "text-foreground-muted hover:bg-surface-hover hover:text-foreground",
                     )}
                   >
                     <Icon className="size-4 shrink-0" />
-                    {section.label}
+                    {t(`sections.${section.labelKey}`)}
                   </button>
                 );
               })}
@@ -204,13 +235,13 @@ export function SettingsBoard() {
           </CardContent>
         </Card>
 
-        <div>
+        <div className="min-w-0">
           {activeSection === "business" ? (
             <Card>
               <CardHeader>
-                <CardTitle>Business profile</CardTitle>
+                <CardTitle>{t("business.title")}</CardTitle>
                 <CardDescription>
-                  Information displayed to customers in bookings and receipts.
+                  {t("business.description")}
                 </CardDescription>
               </CardHeader>
 
@@ -221,19 +252,21 @@ export function SettingsBoard() {
                   </div>
 
                   <div className="flex-1">
-                    <p className="font-medium text-foreground">Business logo</p>
+                    <p className="font-medium text-foreground">
+                      {t("business.logo")}
+                    </p>
                     <p className="mt-1 text-sm text-foreground-muted">
-                      Used on the booking page, display and receipts.
+                      {t("business.logoDescription")}
                     </p>
                   </div>
 
-                  <Button variant="outline">Change logo</Button>
+                  <Button variant="outline">{t("business.changeLogo")}</Button>
                 </div>
 
                 <div className="grid gap-5 md:grid-cols-2">
                   <label className="space-y-2">
                     <span className="text-sm font-medium text-foreground">
-                      Business name
+                      {t("business.name")}
                     </span>
                     <input
                       className={fieldClassName}
@@ -246,7 +279,7 @@ export function SettingsBoard() {
 
                   <label className="space-y-2">
                     <span className="text-sm font-medium text-foreground">
-                      Business category
+                      {t("business.category")}
                     </span>
                     <select
                       className={fieldClassName}
@@ -255,17 +288,17 @@ export function SettingsBoard() {
                         updateBusiness("category", event.target.value)
                       }
                     >
-                      <option>Beauty salon</option>
-                      <option>Barbershop</option>
-                      <option>Medical office</option>
-                      <option>Professional services</option>
-                      <option>Other service business</option>
+                      <option value="Beauty salon">{t("business.categories.beautySalon")}</option>
+                      <option value="Barbershop">{t("business.categories.barbershop")}</option>
+                      <option value="Medical office">{t("business.categories.medicalOffice")}</option>
+                      <option value="Professional services">{t("business.categories.professionalServices")}</option>
+                      <option value="Other service business">{t("business.categories.other")}</option>
                     </select>
                   </label>
 
                   <label className="space-y-2">
                     <span className="text-sm font-medium text-foreground">
-                      Phone
+                      {t("business.phone")}
                     </span>
                     <input
                       className={fieldClassName}
@@ -278,7 +311,7 @@ export function SettingsBoard() {
 
                   <label className="space-y-2">
                     <span className="text-sm font-medium text-foreground">
-                      Email
+                      {t("business.email")}
                     </span>
                     <input
                       type="email"
@@ -292,7 +325,7 @@ export function SettingsBoard() {
 
                   <label className="space-y-2 md:col-span-2">
                     <span className="text-sm font-medium text-foreground">
-                      Address
+                      {t("business.address")}
                     </span>
                     <input
                       className={fieldClassName}
@@ -305,7 +338,7 @@ export function SettingsBoard() {
 
                   <label className="space-y-2 md:col-span-2">
                     <span className="text-sm font-medium text-foreground">
-                      Time zone
+                      {t("business.timezone")}
                     </span>
                     <select
                       className={fieldClassName}
@@ -315,19 +348,19 @@ export function SettingsBoard() {
                       }
                     >
                       <option value="America/New_York">
-                        Eastern Time — New York
+                        {t("business.timezones.newYork")}
                       </option>
                       <option value="America/Chicago">
-                        Central Time — Chicago
+                        {t("business.timezones.chicago")}
                       </option>
                       <option value="America/Denver">
-                        Mountain Time — Denver
+                        {t("business.timezones.denver")}
                       </option>
                       <option value="America/Los_Angeles">
-                        Pacific Time — Los Angeles
+                        {t("business.timezones.losAngeles")}
                       </option>
                       <option value="America/Bogota">
-                        Colombia Time — Bogotá
+                        {t("business.timezones.bogota")}
                       </option>
                     </select>
                   </label>
@@ -336,12 +369,19 @@ export function SettingsBoard() {
             </Card>
           ) : null}
 
+          {activeSection === "landing" ? (
+            <LandingPageSettings
+              branding={branding}
+              setBranding={setBranding}
+            />
+          ) : null}
+
           {activeSection === "hours" ? (
             <Card>
               <CardHeader>
-                <CardTitle>Business hours</CardTitle>
+                <CardTitle>{t("hours.title")}</CardTitle>
                 <CardDescription>
-                  Define when customers can book appointments or join the queue.
+                  {t("hours.description")}
                 </CardDescription>
               </CardHeader>
 
@@ -352,7 +392,7 @@ export function SettingsBoard() {
                     className="grid gap-3 border-b border-border py-4 last:border-b-0 sm:grid-cols-[140px_90px_1fr_24px_1fr] sm:items-center"
                   >
                     <p className="text-sm font-medium text-foreground">
-                      {item.day}
+                      {t(`hours.days.${item.day.toLowerCase()}`)}
                     </p>
 
                     <button
@@ -367,7 +407,7 @@ export function SettingsBoard() {
                           : "bg-surface-muted text-foreground-muted",
                       )}
                     >
-                      {item.enabled ? "Open" : "Closed"}
+                      {item.enabled ? t("hours.open") : t("hours.closed")}
                     </button>
 
                     <input
@@ -402,17 +442,17 @@ export function SettingsBoard() {
           {activeSection === "appointments" ? (
             <Card>
               <CardHeader>
-                <CardTitle>Appointment preferences</CardTitle>
+                <CardTitle>{t("appointments.title")}</CardTitle>
                 <CardDescription>
-                  Configure the rules for your public booking experience.
+                  {t("appointments.description")}
                 </CardDescription>
               </CardHeader>
 
               <CardContent>
                 <SwitchField
                   checked={appointments.onlineBooking}
-                  label="Online booking"
-                  description="Allow customers to schedule appointments from your public landing page."
+                  label={t("appointments.onlineBooking")}
+                  description={t("appointments.onlineBookingDescription")}
                   onCheckedChange={(checked) =>
                     setAppointments((current) => ({
                       ...current,
@@ -423,8 +463,8 @@ export function SettingsBoard() {
 
                 <SwitchField
                   checked={appointments.allowWalkIns}
-                  label="Allow walk-ins"
-                  description="Enable staff to add customers without a previous appointment."
+                  label={t("appointments.allowWalkIns")}
+                  description={t("appointments.allowWalkInsDescription")}
                   onCheckedChange={(checked) =>
                     setAppointments((current) => ({
                       ...current,
@@ -435,8 +475,8 @@ export function SettingsBoard() {
 
                 <SwitchField
                   checked={appointments.autoConfirm}
-                  label="Automatically confirm appointments"
-                  description="New appointments are confirmed immediately without manual approval."
+                  label={t("appointments.autoConfirm")}
+                  description={t("appointments.autoConfirmDescription")}
                   onCheckedChange={(checked) =>
                     setAppointments((current) => ({
                       ...current,
@@ -448,7 +488,7 @@ export function SettingsBoard() {
                 <div className="grid gap-5 pt-5 md:grid-cols-3">
                   <label className="space-y-2">
                     <span className="text-sm font-medium text-foreground">
-                      Time slot interval
+                      {t("appointments.slotInterval")}
                     </span>
                     <select
                       className={fieldClassName}
@@ -460,16 +500,16 @@ export function SettingsBoard() {
                         }))
                       }
                     >
-                      <option value="15">15 minutes</option>
-                      <option value="30">30 minutes</option>
-                      <option value="45">45 minutes</option>
-                      <option value="60">60 minutes</option>
+                      <option value="15">{common("minutes", { count: 15 })}</option>
+                      <option value="30">{common("minutes", { count: 30 })}</option>
+                      <option value="45">{common("minutes", { count: 45 })}</option>
+                      <option value="60">{common("minutes", { count: 60 })}</option>
                     </select>
                   </label>
 
                   <label className="space-y-2">
                     <span className="text-sm font-medium text-foreground">
-                      Minimum booking notice
+                      {t("appointments.minimumNotice")}
                     </span>
                     <select
                       className={fieldClassName}
@@ -481,16 +521,16 @@ export function SettingsBoard() {
                         }))
                       }
                     >
-                      <option value="0">No minimum</option>
-                      <option value="1">1 hour</option>
-                      <option value="2">2 hours</option>
-                      <option value="24">24 hours</option>
+                      <option value="0">{t("appointments.noMinimum")}</option>
+                      <option value="1">{t("appointments.oneHour")}</option>
+                      <option value="2">{t("appointments.twoHours")}</option>
+                      <option value="24">{t("appointments.twentyFourHours")}</option>
                     </select>
                   </label>
 
                   <label className="space-y-2">
                     <span className="text-sm font-medium text-foreground">
-                      Cancellation window
+                      {t("appointments.cancellationWindow")}
                     </span>
                     <select
                       className={fieldClassName}
@@ -502,10 +542,10 @@ export function SettingsBoard() {
                         }))
                       }
                     >
-                      <option value="2">2 hours</option>
-                      <option value="6">6 hours</option>
-                      <option value="12">12 hours</option>
-                      <option value="24">24 hours</option>
+                      <option value="2">{t("appointments.twoHours")}</option>
+                      <option value="6">{t("appointments.sixHours")}</option>
+                      <option value="12">{t("appointments.twelveHours")}</option>
+                      <option value="24">{t("appointments.twentyFourHours")}</option>
                     </select>
                   </label>
                 </div>
@@ -516,9 +556,9 @@ export function SettingsBoard() {
           {activeSection === "queue" ? (
             <Card>
               <CardHeader>
-                <CardTitle>Queue preferences</CardTitle>
+                <CardTitle>{t("queue.title")}</CardTitle>
                 <CardDescription>
-                  Control ticket numbering and the information shown publicly.
+                  {t("queue.description")}
                 </CardDescription>
               </CardHeader>
 
@@ -526,7 +566,7 @@ export function SettingsBoard() {
                 <div className="grid gap-5 border-b border-border pb-5 md:grid-cols-2">
                   <label className="space-y-2">
                     <span className="text-sm font-medium text-foreground">
-                      Ticket prefix
+                      {t("queue.ticketPrefix")}
                     </span>
                     <input
                       maxLength={3}
@@ -543,7 +583,7 @@ export function SettingsBoard() {
 
                   <label className="space-y-2">
                     <span className="text-sm font-medium text-foreground">
-                      Starting number
+                      {t("queue.startingNumber")}
                     </span>
                     <input
                       type="number"
@@ -562,8 +602,8 @@ export function SettingsBoard() {
 
                 <SwitchField
                   checked={queue.showCustomerName}
-                  label="Show customer name"
-                  description="Display the customer name together with the ticket number."
+                  label={t("queue.showCustomerName")}
+                  description={t("queue.showCustomerNameDescription")}
                   onCheckedChange={(checked) =>
                     setQueue((current) => ({
                       ...current,
@@ -574,8 +614,8 @@ export function SettingsBoard() {
 
                 <SwitchField
                   checked={queue.showEstimatedWait}
-                  label="Show estimated waiting time"
-                  description="Display an estimated wait on the public queue screen."
+                  label={t("queue.showEstimatedWait")}
+                  description={t("queue.showEstimatedWaitDescription")}
                   onCheckedChange={(checked) =>
                     setQueue((current) => ({
                       ...current,
@@ -586,8 +626,8 @@ export function SettingsBoard() {
 
                 <SwitchField
                   checked={queue.automaticCalling}
-                  label="Automatic customer calling"
-                  description="Automatically call the next compatible customer when a station becomes available."
+                  label={t("queue.automaticCalling")}
+                  description={t("queue.automaticCallingDescription")}
                   onCheckedChange={(checked) =>
                     setQueue((current) => ({
                       ...current,
@@ -602,17 +642,17 @@ export function SettingsBoard() {
           {activeSection === "notifications" ? (
             <Card>
               <CardHeader>
-                <CardTitle>Notifications</CardTitle>
+                <CardTitle>{t("notifications.title")}</CardTitle>
                 <CardDescription>
-                  Choose which customer and business notifications are sent.
+                  {t("notifications.description")}
                 </CardDescription>
               </CardHeader>
 
               <CardContent>
                 <SwitchField
                   checked={notifications.emailConfirmations}
-                  label="Appointment confirmations"
-                  description="Send an email when an appointment is created or confirmed."
+                  label={t("notifications.confirmations")}
+                  description={t("notifications.confirmationsDescription")}
                   onCheckedChange={(checked) =>
                     setNotifications((current) => ({
                       ...current,
@@ -623,8 +663,8 @@ export function SettingsBoard() {
 
                 <SwitchField
                   checked={notifications.emailReminders}
-                  label="Appointment reminders"
-                  description="Send a reminder before the scheduled appointment."
+                  label={t("notifications.reminders")}
+                  description={t("notifications.remindersDescription")}
                   onCheckedChange={(checked) =>
                     setNotifications((current) => ({
                       ...current,
@@ -635,8 +675,8 @@ export function SettingsBoard() {
 
                 <SwitchField
                   checked={notifications.cancellationAlerts}
-                  label="Cancellation alerts"
-                  description="Notify the business when a customer cancels an appointment."
+                  label={t("notifications.cancellations")}
+                  description={t("notifications.cancellationsDescription")}
                   onCheckedChange={(checked) =>
                     setNotifications((current) => ({
                       ...current,
@@ -647,8 +687,8 @@ export function SettingsBoard() {
 
                 <SwitchField
                   checked={notifications.smsNotifications}
-                  label="SMS notifications"
-                  description="Available after connecting an SMS provider."
+                  label={t("notifications.sms")}
+                  description={t("notifications.smsDescription")}
                   disabled
                   onCheckedChange={(checked) =>
                     setNotifications((current) => ({
@@ -664,16 +704,16 @@ export function SettingsBoard() {
           {activeSection === "billing" ? (
             <div className="space-y-5">
               <Card>
-                <CardHeader className="flex-row items-start justify-between gap-4">
+                <CardHeader className="items-start justify-between gap-4 sm:flex-row">
                   <div>
-                    <CardTitle>Subscription</CardTitle>
+                    <CardTitle>{t("subscription.title")}</CardTitle>
                     <CardDescription>
-                      Current subscription and activated Turnix services.
+                      {t("subscription.description")}
                     </CardDescription>
                   </div>
 
                   <span className="rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
-                    Business
+                    {t("subscription.plan")}
                   </span>
                 </CardHeader>
 
@@ -682,18 +722,18 @@ export function SettingsBoard() {
                     {[
                       {
                         icon: CalendarDays,
-                        title: "Online booking",
-                        detail: "Active",
+                        title: t("subscription.onlineBooking"),
+                        detail: t("subscription.active"),
                       },
                       {
                         icon: Monitor,
-                        title: "Queue management",
-                        detail: "Active",
+                        title: t("subscription.queueManagement"),
+                        detail: t("subscription.active"),
                       },
                       {
                         icon: CreditCard,
-                        title: "Payments",
-                        detail: "Active",
+                        title: t("subscription.payments"),
+                        detail: t("subscription.active"),
                       },
                     ].map((module) => {
                       const Icon = module.icon;
@@ -722,16 +762,16 @@ export function SettingsBoard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Subscription summary</CardTitle>
+                  <CardTitle>{t("subscription.summary")}</CardTitle>
                   <CardDescription>
-                    Simulated billing information for the frontend prototype.
+                    {t("subscription.summaryDescription")}
                   </CardDescription>
                 </CardHeader>
 
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between border-b border-border pb-4">
                     <span className="text-sm text-foreground-muted">
-                      Monthly subscription
+                      {t("subscription.monthlySubscription")}
                     </span>
                     <span className="font-semibold text-foreground">
                       $150.00
@@ -740,19 +780,19 @@ export function SettingsBoard() {
 
                   <div className="flex items-center justify-between border-b border-border pb-4">
                     <span className="text-sm text-foreground-muted">
-                      Next billing date
+                      {t("subscription.nextBillingDate")}
                     </span>
                     <span className="font-medium text-foreground">
-                      September 1, 2026
+                      {t("subscription.nextBillingValue")}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-foreground-muted">
-                      Payment method
+                      {t("subscription.paymentMethod")}
                     </span>
                     <span className="font-medium text-foreground">
-                      Visa ending in 4242
+                      {t("subscription.paymentMethodValue")}
                     </span>
                   </div>
                 </CardContent>

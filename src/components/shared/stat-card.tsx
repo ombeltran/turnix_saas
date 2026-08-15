@@ -62,7 +62,7 @@ export function StatCard({
   return (
     <article
       className={cn(
-        "rounded-xl border border-border bg-surface p-5",
+        "rounded-xl border border-border bg-surface p-4 sm:p-5",
         "shadow-(--shadow-sm)",
         "transition-shadow duration-200 hover:shadow-(--shadow-md)",
         className

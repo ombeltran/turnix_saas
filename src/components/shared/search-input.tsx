@@ -4,6 +4,7 @@ import {
   Search,
   X,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type SearchInputProps = {
   value: string;
@@ -18,12 +19,15 @@ type SearchInputProps = {
 export function SearchInput({
   value,
   onChange,
-  placeholder = "Search...",
+  placeholder,
   disabled = false,
   autoFocus = false,
   className = "",
-  ariaLabel = "Search",
+  ariaLabel,
 }: SearchInputProps) {
+  const common = useTranslations("common");
+  const resolvedPlaceholder = placeholder ?? `${common("search")}...`;
+  const resolvedAriaLabel = ariaLabel ?? common("search");
   const hasValue = value.trim().length > 0;
 
   function handleClear() {
@@ -56,8 +60,8 @@ export function SearchInput({
         value={value}
         disabled={disabled}
         autoFocus={autoFocus}
-        placeholder={placeholder}
-        aria-label={ariaLabel}
+        placeholder={resolvedPlaceholder}
+        aria-label={resolvedAriaLabel}
         onChange={(event) =>
           onChange(event.target.value)
         }
@@ -83,8 +87,8 @@ export function SearchInput({
       {hasValue && !disabled && (
         <button
           type="button"
-          aria-label="Clear search"
-          title="Clear search"
+          aria-label={common("clearSearch")}
+          title={common("clearSearch")}
           onClick={handleClear}
           className="
             absolute right-2 top-1/2

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   CalendarDays,
   ChevronRight,
@@ -32,6 +33,8 @@ import { SectionHeader } from "../shared/section-header";
 type CustomerStatusFilter = "all" | "active" | "inactive";
 
 export function CustomersBoard() {
+  const t = useTranslations("customers");
+  const common = useTranslations("common");
   const [search, setSearch] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
     null,
@@ -79,33 +82,33 @@ export function CustomersBoard() {
     <div className="mx-auto flex max-w-7xl flex-col gap-6">
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Total customers"
+          title={t("totalCustomers")}
           value={customerList.length}
-          description="registered customers"
+          description={t("registeredCustomers")}
           icon={UsersRound}
           variant="primary"
         />
 
         <StatCard
-          title="Active customers"
+          title={t("activeCustomers")}
           value={activeCustomers}
-          description="customers with recent activity"
+          description={t("recentActivity")}
           icon={UserCheck}
           variant="success"
         />
 
         <StatCard
-          title="Total visits"
+          title={t("totalVisits")}
           value={totalVisits}
-          description="recorded appointments"
+          description={t("recordedAppointments")}
           icon={CalendarDays}
           variant="info"
         />
 
         <StatCard
-          title="Customer revenue"
+          title={t("customerRevenue")}
           value={`$${totalRevenue.toFixed(2)}`}
-          description="historical customer spend"
+          description={t("historicalSpend")}
           icon={DollarSign}
           variant="warning"
         />
@@ -114,26 +117,26 @@ export function CustomersBoard() {
       <Card>
         <CardHeader className="gap-4">
           <SectionHeader
-            title="Customer directory"
-            description="Search customers and review their activity"
+            title={t("directory")}
+            description={t("directoryDescription")}
             action={
               <Button type="button" onClick={() => setIsAddCustomerOpen(true)}>
                 <UserPlus className="size-4" />
-                Add customer
+                {t("addCustomer")}
               </Button>
             }
           />
 
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-            <SearchInput value={search} onChange={setSearch} />
+            <SearchInput value={search} onChange={setSearch} placeholder={t("searchPlaceholder")} />
 
             <FilterChips
               value={status}
               onChange={setStatus}
               options={[
-                { value: "all", label: "All" },
-                { value: "active", label: "Active" },
-                { value: "inactive", label: "Inactive" },
+                { value: "all", label: common("all") },
+                { value: "active", label: common("active") },
+                { value: "inactive", label: common("inactive") },
               ]}
               className="flex-none"
             />
@@ -147,31 +150,31 @@ export function CustomersBoard() {
                 <thead>
                   <tr className="border-b border-border text-left">
                     <th className="pb-3 pr-4 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                      Customer
+                      {common("customer")}
                     </th>
 
                     <th className="px-4 pb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                      Contact
+                      {t("contact")}
                     </th>
 
                     <th className="px-4 pb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                      Last visit
+                      {t("lastVisit")}
                     </th>
 
                     <th className="px-4 pb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                      Visits
+                      {t("visits")}
                     </th>
 
                     <th className="px-4 pb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                      Total spent
+                      {t("totalSpent")}
                     </th>
 
                     <th className="px-4 pb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                      Status
+                      {common("status")}
                     </th>
 
                     <th className="pb-3 pl-4 text-right text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                      Action
+                      {t("action")}
                     </th>
                   </tr>
                 </thead>
@@ -232,7 +235,7 @@ export function CustomersBoard() {
                           size="sm"
                           onClick={() => setSelectedCustomer(customer)}
                         >
-                          View
+                          {t("view")}
                           <ChevronRight className="size-4" />
                         </Button>
                       </td>
@@ -244,8 +247,8 @@ export function CustomersBoard() {
           ) : (
             <EmptyState
               icon={UsersRound}
-              title="No customers found"
-              description="Try changing the search or selected filter."
+              title={t("noCustomers")}
+              description={t("noCustomersDescription")}
             />
           )}
         </CardContent>

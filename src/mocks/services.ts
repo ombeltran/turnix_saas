@@ -16,6 +16,7 @@ export type Service = {
   price: number;
   status: ServiceStatus;
   appointmentsCount: number;
+  imageUrl: string;
 };
 
 export const services: Service[] = [
@@ -28,6 +29,8 @@ export const services: Service[] = [
     price: 45,
     status: "active",
     appointmentsCount: 86,
+    imageUrl:
+      "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=900&q=80",
   },
   {
     id: "SRV-002",
@@ -38,6 +41,8 @@ export const services: Service[] = [
     price: 28,
     status: "active",
     appointmentsCount: 124,
+    imageUrl:
+      "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=900&q=80",
   },
   {
     id: "SRV-003",
@@ -48,6 +53,8 @@ export const services: Service[] = [
     price: 95,
     status: "active",
     appointmentsCount: 42,
+    imageUrl:
+      "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=900&q=80",
   },
   {
     id: "SRV-004",
@@ -58,6 +65,8 @@ export const services: Service[] = [
     price: 35,
     status: "active",
     appointmentsCount: 68,
+    imageUrl:
+      "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=900&q=80",
   },
   {
     id: "SRV-005",
@@ -68,5 +77,7 @@ export const services: Service[] = [
     price: 65,
     status: "inactive",
     appointmentsCount: 19,
+    imageUrl:
+      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=900&q=80",
   },
 ];

@@ -8,6 +8,7 @@ import {
   Scissors,
   UserRound,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { CustomerStatusBadge } from "@/components/business/customer-status-badge";
 import { SidePanel } from "@/components/shared/side-panel";
@@ -23,13 +24,15 @@ export function CustomerProfilePanel({
   customer,
   onClose,
 }: CustomerProfilePanelProps) {
+  const t = useTranslations("customers");
+  const appointments = useTranslations("appointments");
   return (
     <SidePanel
       open={customer !== null}
-      title={customer?.name ?? "Customer profile"}
+      title={customer?.name ?? t("profile")}
       subtitle={
         customer
-          ? `Customer ID: ${customer.id}`
+          ? t("customerId", { id: customer.id })
           : undefined
       }
       size="lg"
@@ -41,11 +44,11 @@ export function CustomerProfilePanel({
               type="button"
               variant="outline"
             >
-              Edit customer
+              {t("editCustomer")}
             </Button>
 
             <Button type="button">
-              New appointment
+              {appointments("newAppointment")}
             </Button>
           </>
         ) : null
@@ -63,6 +66,7 @@ function CustomerProfileContent({
 }: {
   customer: Customer;
 }) {
+  const t = useTranslations("customers");
   return (
     <div className="space-y-6">
       <section className="rounded-xl border border-border bg-background p-5">
@@ -83,8 +87,7 @@ function CustomerProfileContent({
             </div>
 
             <p className="mt-1 text-sm text-foreground-muted">
-              Preferred service:{" "}
-              {customer.preferredService}
+              {t("preferredServiceLabel", { service: customer.preferredService })}
             </p>
           </div>
         </div>
@@ -105,42 +108,42 @@ function CustomerProfileContent({
       <section className="grid gap-3 sm:grid-cols-3">
         <CustomerMetric
           icon={CalendarDays}
-          label="Visits"
+          label={t("visits")}
           value={String(customer.totalVisits)}
         />
 
         <CustomerMetric
           icon={DollarSign}
-          label="Total spent"
+          label={t("totalSpent")}
           value={`$${customer.totalSpent.toFixed(2)}`}
         />
 
         <CustomerMetric
           icon={Scissors}
-          label="Favorite"
+          label={t("favorite")}
           value={customer.preferredService}
         />
       </section>
 
       <section className="rounded-xl border border-border bg-background p-5">
         <h3 className="font-semibold text-foreground">
-          Customer notes
+          {t("customerNotes")}
         </h3>
 
         <p className="mt-3 text-sm leading-6 text-foreground-muted">
           {customer.notes ??
-            "There are no notes for this customer."}
+            t("noNotes")}
         </p>
       </section>
 
       <section>
         <div className="mb-3">
           <h3 className="font-semibold text-foreground">
-            Visit history
+            {t("visitHistory")}
           </h3>
 
           <p className="mt-1 text-sm text-foreground-muted">
-            Recent services and payments
+            {t("visitHistoryDescription")}
           </p>
         </div>
 
@@ -180,15 +183,15 @@ function CustomerProfileContent({
             ))}
           </div>
         ) : (
-          <div className="rounded-xl border border-dashed border-border bg-background p-8 text-center">
+          <div className="rounded-xl border border-dashed border-border bg-background p-5 text-center sm:p-8">
             <CalendarDays className="mx-auto size-6 text-foreground-muted" />
 
             <p className="mt-3 font-medium text-foreground">
-              No visits yet
+              {t("noVisitsYet")}
             </p>
 
             <p className="mt-1 text-sm text-foreground-muted">
-              This customer does not have recorded visits.
+              {t("noVisitsDescription")}
             </p>
           </div>
         )}

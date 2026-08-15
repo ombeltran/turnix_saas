@@ -27,7 +27,7 @@ export function CardHeader({
   return (
     <div
       className={cn(
-        "flex flex-col gap-1.5 p-5",
+        "flex flex-col gap-1.5 p-4 sm:p-5",
         className
       )}
       {...props}
@@ -72,7 +72,7 @@ export function CardContent({
   return (
     <div
       className={cn(
-        "px-5 pb-5",
+        "px-4 pb-4 sm:px-5 sm:pb-5",
         className
       )}
       {...props}

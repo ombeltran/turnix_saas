@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import type { CustomerStatus } from "@/mocks/customers";
+import { useTranslations } from "next-intl";
 
 type CustomerStatusBadgeProps = {
   status: CustomerStatus;
@@ -8,6 +9,7 @@ type CustomerStatusBadgeProps = {
 export function CustomerStatusBadge({
   status,
 }: CustomerStatusBadgeProps) {
+  const common = useTranslations("common");
   return (
     <Badge
       variant={
@@ -16,7 +18,7 @@ export function CustomerStatusBadge({
           : "neutral"
       }
     >
-      {status === "active" ? "Active" : "Inactive"}
+      {status === "active" ? common("active") : common("inactive")}
     </Badge>
   );
 }

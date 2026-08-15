@@ -1,15 +1,18 @@
 import { EmployeesBoard } from "@/components/business/employees-board";
 import { Topbar } from "@/components/layout/topbar";
+import { getTranslations } from "next-intl/server";
 
-export default function EmployeesPage() {
+export default async function EmployeesPage() {
+  const t = await getTranslations("employees");
+
   return (
     <>
       <Topbar
-        title="Employees"
-        subtitle="Manage your team, services and queue assignments"
+        title={t("title")}
+        subtitle={t("subtitle")}
       />
 
-      <main className="flex-1 p-4 md:p-6 lg:p-8">
+      <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8">
         <EmployeesBoard />
       </main>
     </>

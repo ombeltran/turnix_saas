@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type SubmitEvent } from "react";
+import { useTranslations } from "next-intl";
 
 import { SidePanel } from "@/components/shared/side-panel";
 import { Button } from "@/components/ui/button";
@@ -31,27 +32,29 @@ export function ServiceFormPanel({
   onClose,
   onSave,
 }: ServiceFormPanelProps) {
+  const t = useTranslations("services");
+  const common = useTranslations("common");
   const isEditing = service !== null;
 
   return (
     <SidePanel
       open={open}
-      title={isEditing ? "Edit service" : "Add service"}
+      title={isEditing ? t("editService") : t("addService")}
       subtitle={
         isEditing
-          ? "Update the service details and availability."
-          : "Create a new service for your business."
+          ? t("updateService")
+          : t("createService")
       }
       size="md"
       onClose={onClose}
       footer={
         <div className="flex w-full justify-end gap-3">
           <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
+            {common("cancel")}
           </Button>
 
           <Button type="submit" form={formId}>
-            {isEditing ? "Save changes" : "Add service"}
+            {isEditing ? common("saveChanges") : t("addService")}
           </Button>
         </div>
       }
@@ -73,10 +76,13 @@ function ServiceFormContent({
   onClose,
   onSave,
 }: ServiceFormContentProps) {
+  const t = useTranslations("services");
+  const common = useTranslations("common");
   const [name, setName] = useState(service?.name ?? "");
   const [description, setDescription] = useState(
     service?.description ?? "",
   );
+  const [imageUrl, setImageUrl] = useState(service?.imageUrl ?? "");
   const [category, setCategory] = useState<ServiceCategory>(
     service?.category ?? "hair",
   );
@@ -117,6 +123,7 @@ function ServiceFormContent({
     price: normalizedPrice,
     status,
     appointmentsCount: service?.appointmentsCount ?? 0,
+    imageUrl: imageUrl.trim(),
   });
 
   onClose();
@@ -128,29 +135,39 @@ function ServiceFormContent({
       onSubmit={handleSubmit}
       className="flex flex-col gap-5"
     >
-      <FormField label="Service name" required>
+      <FormField label={t("serviceName")} required>
         <input
           type="text"
           value={name}
           onChange={(event) => setName(event.target.value)}
-          placeholder="Example: Women’s Haircut"
+          placeholder={t("serviceNamePlaceholder")}
           required
           autoFocus
           className={inputClasses}
         />
       </FormField>
 
-      <FormField label="Description">
+      <FormField label={t("description")}>
         <textarea
           value={description}
           onChange={(event) => setDescription(event.target.value)}
-          placeholder="Briefly describe what the service includes."
+          placeholder={t("descriptionPlaceholder")}
           rows={4}
           className={inputClasses}
         />
       </FormField>
 
-      <FormField label="Category" required>
+      <FormField label={t("imageUrl")}>
+        <input
+          type="url"
+          value={imageUrl}
+          onChange={(event) => setImageUrl(event.target.value)}
+          placeholder={t("imageUrlPlaceholder")}
+          className={inputClasses}
+        />
+      </FormField>
+
+      <FormField label={t("category")} required>
         <select
           value={category}
           onChange={(event) =>
@@ -158,16 +175,16 @@ function ServiceFormContent({
           }
           className={inputClasses}
         >
-          <option value="hair">Hair</option>
-          <option value="barber">Barber</option>
-          <option value="nails">Nails</option>
-          <option value="beauty">Beauty</option>
-          <option value="other">Other</option>
+          <option value="hair">{t("categories.hair")}</option>
+          <option value="barber">{t("categories.barber")}</option>
+          <option value="nails">{t("categories.nails")}</option>
+          <option value="beauty">{t("categories.beauty")}</option>
+          <option value="other">{t("categories.other")}</option>
         </select>
       </FormField>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField label="Duration (minutes)" required>
+        <FormField label={t("durationMinutes")} required>
           <input
             type="number"
             min="5"
@@ -179,7 +196,7 @@ function ServiceFormContent({
           />
         </FormField>
 
-        <FormField label="Price" required>
+        <FormField label={t("price")} required>
           <input
             type="number"
             min="0"
@@ -192,7 +209,7 @@ function ServiceFormContent({
         </FormField>
       </div>
 
-      <FormField label="Status" required>
+      <FormField label={t("status")} required>
         <select
           value={status}
           onChange={(event) =>
@@ -200,8 +217,8 @@ function ServiceFormContent({
           }
           className={inputClasses}
         >
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
+          <option value="active">{common("active")}</option>
+          <option value="inactive">{common("inactive")}</option>
         </select>
       </FormField>
     </form>

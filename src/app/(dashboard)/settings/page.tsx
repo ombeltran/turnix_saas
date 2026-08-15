@@ -1,15 +1,18 @@
 import { SettingsBoard } from "@/components/business/settings-board";
 import { Topbar } from "@/components/layout/topbar";
+import { getTranslations } from "next-intl/server";
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const t = await getTranslations("settings");
+
   return (
     <>
       <Topbar
-        title="Settings"
-        subtitle="Configure your business, bookings and queue preferences"
+        title={t("title")}
+        subtitle={t("subtitle")}
       />
 
-      <main className="flex-1 p-4 md:p-6 lg:p-8">
+      <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8">
         <SettingsBoard />
       </main>
     </>

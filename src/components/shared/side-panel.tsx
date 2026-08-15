@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 
@@ -42,6 +43,7 @@ export function SidePanel({
   closeOnBackdrop = true,
   onClose,
 }: SidePanelProps) {
+  const common = useTranslations("common");
   const generatedTitleId = useId();
   const generatedDescriptionId = useId();
 
@@ -111,11 +113,11 @@ export function SidePanel({
           ${sizeClasses[size]}
         `}
       >
-        <header className="flex shrink-0 items-start justify-between gap-4 border-b border-border p-5">
+        <header className="flex shrink-0 items-start justify-between gap-3 border-b border-border p-4 sm:p-5">
           <div className="min-w-0 flex-1">
             <h2
               id={generatedTitleId}
-              className="text-xl font-semibold text-foreground"
+              className="break-words text-lg font-semibold text-foreground sm:text-xl"
             >
               {title}
             </h2>
@@ -137,7 +139,7 @@ export function SidePanel({
               type="button"
               variant="ghost"
               size="icon"
-              aria-label="Close panel"
+              aria-label={common("close")}
               onClick={onClose}
             >
               <X className="size-5" />
@@ -145,12 +147,12 @@ export function SidePanel({
           </div>
         </header>
 
-        <div className="min-h-0 flex-1 overflow-y-auto p-5">
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5">
           {children}
         </div>
 
         {footer && (
-          <footer className="flex shrink-0 flex-wrap justify-end gap-3 border-t border-border p-5">
+          <footer className="flex shrink-0 flex-wrap justify-stretch gap-2 border-t border-border p-4 sm:justify-end sm:gap-3 sm:p-5 [&>button]:flex-1 sm:[&>button]:flex-none">
             {footer}
           </footer>
         )}

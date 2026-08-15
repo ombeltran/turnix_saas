@@ -2,10 +2,15 @@
 
 import { useState } from "react";
 import { CalendarDays, Plus, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
+import { services } from "@/mocks/services";
+import { employees } from "@/mocks/employees";
 
 export function NewAppointmentPanel() {
+  const t = useTranslations("appointments");
+  const common = useTranslations("common");
   const [isOpen, setIsOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
@@ -23,7 +28,7 @@ export function NewAppointmentPanel() {
     <>
       <Button onClick={() => setIsOpen(true)}>
         <Plus className="size-4" />
-        New appointment
+        {t("newAppointment")}
       </Button>
 
       {isOpen ? (
@@ -49,18 +54,18 @@ export function NewAppointmentPanel() {
                   id="new-appointment-title"
                   className="text-lg font-semibold text-foreground"
                 >
-                  New appointment
+                  {t("newAppointment")}
                 </h2>
 
                 <p className="mt-1 text-sm text-foreground-muted">
-                  Schedule a service for a customer.
+                  {t("newAppointmentDescription")}
                 </p>
               </div>
 
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label="Close panel"
+                aria-label={common("close")}
                 onClick={closePanel}
               >
                 <X className="size-5" />
@@ -74,16 +79,15 @@ export function NewAppointmentPanel() {
                 </div>
 
                 <h3 className="mt-5 text-xl font-semibold text-foreground">
-                  Appointment created
+                  {t("appointmentCreated")}
                 </h3>
 
                 <p className="mt-2 max-w-sm text-sm text-foreground-muted">
-                  The appointment was added successfully to today&apos;s
-                  schedule.
+                  {t("appointmentCreatedDescription")}
                 </p>
 
                 <Button className="mt-6" onClick={closePanel}>
-                  Done
+                  {t("done")}
                 </Button>
               </div>
             ) : (
@@ -92,26 +96,26 @@ export function NewAppointmentPanel() {
                 className="flex min-h-0 flex-1 flex-col"
               >
                 <div className="flex-1 space-y-5 overflow-y-auto p-5">
-                  <FormField label="Customer name">
+                  <FormField label={t("customerName")}>
                     <input
                       required
                       name="customer"
-                      placeholder="Enter customer name"
+                      placeholder={t("customerPlaceholder")}
                       className={fieldClasses}
                     />
                   </FormField>
 
-                  <FormField label="Phone number">
+                  <FormField label={t("phoneNumber")}>
                     <input
                       required
                       name="phone"
                       type="tel"
-                      placeholder="(201) 555-0123"
+                      placeholder={t("phonePlaceholder")}
                       className={fieldClasses}
                     />
                   </FormField>
 
-                  <FormField label="Service">
+                  <FormField label={common("service")}>
                     <select
                       required
                       name="service"
@@ -119,17 +123,19 @@ export function NewAppointmentPanel() {
                       className={fieldClasses}
                     >
                       <option value="" disabled>
-                        Select a service
+                        {t("selectService")}
                       </option>
-                      <option value="haircut">Haircut</option>
-                      <option value="hair-color">Hair color</option>
-                      <option value="beard-trim">Beard trim</option>
-                      <option value="manicure">Manicure</option>
-                      <option value="treatment">Hair treatment</option>
+                      {services
+                        .filter((service) => service.status === "active")
+                        .map((service) => (
+                          <option key={service.id} value={service.id}>
+                            {service.name}
+                          </option>
+                        ))}
                     </select>
                   </FormField>
 
-                  <FormField label="Professional">
+                  <FormField label={common("professional")}>
                     <select
                       required
                       name="employee"
@@ -137,16 +143,20 @@ export function NewAppointmentPanel() {
                       className={fieldClasses}
                     >
                       <option value="" disabled>
-                        Select a professional
+                        {t("selectProfessional")}
                       </option>
-                      <option value="sofia">Sofia Ramirez</option>
-                      <option value="carlos">Carlos Méndez</option>
-                      <option value="valentina">Valentina Ruiz</option>
+                      {employees
+                        .filter((employee) => employee.status === "active")
+                        .map((employee) => (
+                          <option key={employee.id} value={employee.id}>
+                            {employee.name}
+                          </option>
+                        ))}
                     </select>
                   </FormField>
 
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <FormField label="Date">
+                    <FormField label={common("date")}>
                       <input
                         required
                         name="date"
@@ -156,7 +166,7 @@ export function NewAppointmentPanel() {
                       />
                     </FormField>
 
-                    <FormField label="Time">
+                    <FormField label={common("time")}>
                       <input
                         required
                         name="time"
@@ -167,11 +177,11 @@ export function NewAppointmentPanel() {
                     </FormField>
                   </div>
 
-                  <FormField label="Notes" optional>
+                  <FormField label={common("notes")} optional>
                     <textarea
                       name="notes"
                       rows={4}
-                      placeholder="Additional instructions..."
+                      placeholder={t("notesPlaceholder")}
                       className={fieldClasses}
                     />
                   </FormField>
@@ -183,11 +193,11 @@ export function NewAppointmentPanel() {
                     variant="outline"
                     onClick={closePanel}
                   >
-                    Cancel
+                    {common("cancel")}
                   </Button>
 
                   <Button type="submit">
-                    Create appointment
+                    {t("createAppointment")}
                   </Button>
                 </footer>
               </form>
@@ -210,6 +220,8 @@ function FormField({
   optional = false,
   children,
 }: FormFieldProps) {
+  const common = useTranslations("common");
+
   return (
     <label className="block">
       <span className="mb-2 flex items-center justify-between text-sm font-medium text-foreground">
@@ -217,7 +229,7 @@ function FormField({
 
         {optional ? (
           <span className="font-normal text-foreground-muted">
-            Optional
+            {common("optional")}
           </span>
         ) : null}
       </span>

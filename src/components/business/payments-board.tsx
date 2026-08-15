@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Banknote,
   CheckCircle2,
@@ -31,6 +32,8 @@ import {
 import { PaymentCheckoutPanel } from "@/components/business/payment-checkout-panel";
 
 export function PaymentsBoard() {
+  const t = useTranslations("payments");
+  const common = useTranslations("common");
   const [payments, setPayments] = useState<Payment[]>(initialPayments);
 
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
@@ -83,33 +86,33 @@ export function PaymentsBoard() {
     <div className="mx-auto flex max-w-7xl flex-col gap-6">
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Today's revenue"
+          title={t("todayRevenue")}
           value={`$${totalRevenue.toFixed(2)}`}
-          description="completed payments"
+          description={t("completedPayments")}
           icon={DollarSign}
           variant="success"
         />
 
         <StatCard
-          title="Pending payments"
+          title={t("pendingPayments")}
           value={pendingPayments.length}
-          description="services awaiting payment"
+          description={t("servicesAwaitingPayment")}
           icon={ReceiptText}
           variant="warning"
         />
 
         <StatCard
-          title="Completed payments"
+          title={t("completedPayments")}
           value={completedPayments.length}
-          description="transactions today"
+          description={t("transactionsToday")}
           icon={CheckCircle2}
           variant="primary"
         />
 
         <StatCard
-          title="Tips received"
+          title={t("tipsReceived")}
           value={`$${totalTips.toFixed(2)}`}
-          description="additional earnings"
+          description={t("additionalEarnings")}
           icon={WalletCards}
           variant="info"
         />
@@ -118,10 +121,10 @@ export function PaymentsBoard() {
       <section className="grid gap-6 xl:grid-cols-[1.3fr_0.7fr]">
         <Card>
           <CardHeader>
-            <CardTitle>Pending payments</CardTitle>
+            <CardTitle>{t("pendingPayments")}</CardTitle>
 
             <CardDescription>
-              Services completed and ready to be charged
+              {t("pendingDescription")}
             </CardDescription>
           </CardHeader>
 
@@ -160,7 +163,7 @@ export function PaymentsBoard() {
                     <div className="flex flex-wrap items-center gap-3">
                       <div className="mr-2">
                         <p className="text-xs text-foreground-muted">
-                          Amount due
+                          {t("amountDue")}
                         </p>
 
                         <p className="mt-1 text-xl font-bold text-foreground">
@@ -173,13 +176,13 @@ export function PaymentsBoard() {
                         onClick={() => setSelectedPayment(payment)}
                       >
                         <CreditCard className="size-4" />
-                        Charge
+                        {t("charge")}
                       </Button>
 
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={`More options for ${payment.customer}`}
+                        aria-label={t("moreOptions", { customer: payment.customer })}
                       >
                         <MoreHorizontal className="size-4" />
                       </Button>
@@ -194,11 +197,11 @@ export function PaymentsBoard() {
                 </div>
 
                 <p className="mt-4 font-semibold text-foreground">
-                  All payments completed
+                  {t("allCompleted")}
                 </p>
 
                 <p className="mt-1 text-sm text-foreground-muted">
-                  There are no services awaiting payment.
+                  {t("noneAwaiting")}
                 </p>
               </div>
             )}
@@ -207,29 +210,29 @@ export function PaymentsBoard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Payment methods</CardTitle>
+            <CardTitle>{t("paymentMethods")}</CardTitle>
 
             <CardDescription>
-              Revenue distribution by payment type
+              {t("paymentMethodsDescription")}
             </CardDescription>
           </CardHeader>
 
           <CardContent>
             <PaymentMethodSummary
               icon={Banknote}
-              label="Cash"
+              label={t("cash")}
               value={getMethodTotal(completedPayments, "cash")}
             />
 
             <PaymentMethodSummary
               icon={CreditCard}
-              label="Card"
+              label={t("card")}
               value={getMethodTotal(completedPayments, "card")}
             />
 
             <PaymentMethodSummary
               icon={Smartphone}
-              label="Online"
+              label={t("online")}
               value={getMethodTotal(completedPayments, "online")}
             />
           </CardContent>
@@ -238,10 +241,10 @@ export function PaymentsBoard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent transactions</CardTitle>
+          <CardTitle>{t("recentTransactions")}</CardTitle>
 
           <CardDescription>
-            Payments processed during today&apos;s operation
+            {t("recentTransactionsDescription")}
           </CardDescription>
         </CardHeader>
 
@@ -251,27 +254,27 @@ export function PaymentsBoard() {
               <thead>
                 <tr className="border-b border-border text-left">
                   <th className="pb-3 pr-4 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                    Customer
+                    {common("customer")}
                   </th>
 
                   <th className="px-4 pb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                    Service
+                    {common("service")}
                   </th>
 
                   <th className="px-4 pb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                    Method
+                    {t("method")}
                   </th>
 
                   <th className="px-4 pb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                    Status
+                    {common("status")}
                   </th>
 
                   <th className="px-4 pb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                    Time
+                    {common("time")}
                   </th>
 
                   <th className="pb-3 pl-4 text-right text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                    Total
+                    {t("total")}
                   </th>
                 </tr>
               </thead>
@@ -301,7 +304,7 @@ export function PaymentsBoard() {
                         <PaymentMethodBadge method={payment.method} />
                       ) : (
                         <span className="text-sm text-foreground-subtle">
-                          Not selected
+                          {t("notSelected")}
                         </span>
                       )}
                     </td>
@@ -361,10 +364,11 @@ function PaymentMethodSummary({
 }
 
 function PaymentMethodBadge({ method }: { method: PaymentMethod }) {
+  const t = useTranslations("payments");
   const labels = {
-    cash: "Cash",
-    card: "Card",
-    online: "Online",
+    cash: t("cash"),
+    card: t("card"),
+    online: t("online"),
   };
 
   return <Badge variant="primary">{labels[method]}</Badge>;

@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   CalendarCheck,
   CircleDollarSign,
@@ -29,18 +30,20 @@ import {
   type Service,
   type ServiceStatus,
 } from "@/mocks/services";
+import { readServices, saveServices } from "@/lib/service-storage";
 
 type ServiceStatusFilter = "all" | ServiceStatus;
 
-const categoryLabels: Record<Service["category"], string> = {
-  hair: "Hair",
-  barber: "Barber",
-  nails: "Nails",
-  beauty: "Beauty",
-  other: "Other",
-};
-
 export function ServicesBoard() {
+  const t = useTranslations("services");
+  const common = useTranslations("common");
+  const categoryLabels: Record<Service["category"], string> = {
+    hair: t("categories.hair"),
+    barber: t("categories.barber"),
+    nails: t("categories.nails"),
+    beauty: t("categories.beauty"),
+    other: t("categories.other"),
+  };
   const [serviceList, setServiceList] =
     useState<Service[]>(initialServices);
   const [search, setSearch] = useState("");
@@ -49,6 +52,14 @@ export function ServicesBoard() {
   const [selectedService, setSelectedService] =
     useState<Service | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setServiceList(readServices());
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   const filteredServices = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
@@ -117,15 +128,16 @@ export function ServicesBoard() {
         (currentService) => currentService.id === service.id,
       );
 
-      if (serviceExists) {
-        return currentServices.map((currentService) =>
+      const nextServices = serviceExists
+        ? currentServices.map((currentService) =>
           currentService.id === service.id
             ? service
             : currentService,
-        );
-      }
+        )
+        : [service, ...currentServices];
 
-      return [service, ...currentServices];
+      saveServices(nextServices);
+      return nextServices;
     });
   }
 
@@ -133,33 +145,33 @@ export function ServicesBoard() {
     <div className="mx-auto flex max-w-7xl flex-col gap-6">
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Total services"
+          title={t("totalServices")}
           value={serviceList.length}
-          description="services in the catalog"
+          description={t("catalogServices")}
           icon={Layers3}
           variant="primary"
         />
 
         <StatCard
-          title="Active services"
+          title={t("activeServices")}
           value={activeServices}
-          description="available for booking"
+          description={t("availableForBooking")}
           icon={Scissors}
           variant="success"
         />
 
         <StatCard
-          title="Average duration"
-          value={`${averageDuration} min`}
-          description="average service time"
+          title={t("averageDuration")}
+          value={common("minutes", { count: averageDuration })}
+          description={t("averageServiceTime")}
           icon={Clock3}
           variant="info"
         />
 
         <StatCard
-          title="Average price"
+          title={t("averagePrice")}
           value={`$${averagePrice.toFixed(2)}`}
-          description={`${totalAppointments} appointments completed`}
+          description={t("completedAppointments", { count: totalAppointments })}
           icon={CircleDollarSign}
           variant="warning"
         />
@@ -168,12 +180,12 @@ export function ServicesBoard() {
       <Card>
         <CardHeader className="gap-4">
           <SectionHeader
-            title="Service catalog"
-            description="Manage services, prices and availability"
+            title={t("catalog")}
+            description={t("catalogDescription")}
             action={
               <Button type="button" onClick={openNewServicePanel}>
                 <Plus className="size-4" />
-                Add service
+                {t("addService")}
               </Button>
             }
           />
@@ -182,16 +194,16 @@ export function ServicesBoard() {
             <SearchInput
               value={search}
               onChange={setSearch}
-              placeholder="Search services..."
+              placeholder={t("searchPlaceholder")}
             />
 
             <FilterChips
               value={status}
               onChange={setStatus}
               options={[
-                { value: "all", label: "All" },
-                { value: "active", label: "Active" },
-                { value: "inactive", label: "Inactive" },
+                { value: "all", label: common("all") },
+                { value: "active", label: common("active") },
+                { value: "inactive", label: common("inactive") },
               ]}
               className="flex-none"
             />
@@ -204,15 +216,15 @@ export function ServicesBoard() {
               <table className="w-full min-w-225 border-collapse">
                 <thead>
                   <tr className="border-b border-border text-left">
-                    <TableHeader>Service</TableHeader>
-                    <TableHeader>Category</TableHeader>
-                    <TableHeader>Duration</TableHeader>
-                    <TableHeader>Price</TableHeader>
-                    <TableHeader>Appointments</TableHeader>
-                    <TableHeader>Status</TableHeader>
+                    <TableHeader>{common("service")}</TableHeader>
+                    <TableHeader>{t("category")}</TableHeader>
+                    <TableHeader>{common("duration")}</TableHeader>
+                    <TableHeader>{common("price")}</TableHeader>
+                    <TableHeader>{common("appointments")}</TableHeader>
+                    <TableHeader>{common("status")}</TableHeader>
 
                     <th className="pb-3 pl-4 text-right text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                      Action
+                      {t("action")}
                     </th>
                   </tr>
                 </thead>
@@ -225,9 +237,17 @@ export function ServicesBoard() {
                     >
                       <td className="py-4 pr-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                            <Scissors className="size-5" />
-                          </div>
+                          {service.imageUrl ? (
+                            <img
+                              src={service.imageUrl}
+                              alt=""
+                              className="size-10 shrink-0 rounded-lg object-cover"
+                            />
+                          ) : (
+                            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                              <Scissors className="size-5" />
+                            </div>
+                          )}
 
                           <div className="min-w-0">
                             <p className="font-medium text-foreground">
@@ -236,7 +256,7 @@ export function ServicesBoard() {
 
                             <p className="mt-1 max-w-sm truncate text-xs text-foreground-muted">
                               {service.description ||
-                                "No description provided"}
+                                t("descriptionPlaceholder")}
                             </p>
                           </div>
                         </div>
@@ -249,7 +269,7 @@ export function ServicesBoard() {
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-2 text-sm text-foreground">
                           <Clock3 className="size-4 text-foreground-muted" />
-                          {service.duration} min
+                          {common("minutes", { count: service.duration })}
                         </div>
                       </td>
 
@@ -273,8 +293,8 @@ export function ServicesBoard() {
                           }
                         >
                           {service.status === "active"
-                            ? "Active"
-                            : "Inactive"}
+                            ? common("active")
+                            : common("inactive")}
                         </StatusPill>
                       </td>
 
@@ -288,7 +308,7 @@ export function ServicesBoard() {
                           }
                         >
                           <Pencil className="size-4" />
-                          Edit
+                          {common("edit")}
                         </Button>
                       </td>
                     </tr>
@@ -299,8 +319,8 @@ export function ServicesBoard() {
           ) : (
             <EmptyState
               icon={Scissors}
-              title="No services found"
-              description="Try changing the search or selected filter."
+              title={t("noServices")}
+              description={t("noServicesDescription")}
               action={
                 serviceList.length === 0 ? (
                   <Button
@@ -308,7 +328,7 @@ export function ServicesBoard() {
                     onClick={openNewServicePanel}
                   >
                     <Plus className="size-4" />
-                    Add first service
+                    {t("addService")}
                   </Button>
                 ) : undefined
               }

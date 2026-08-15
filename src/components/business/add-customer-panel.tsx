@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { UserPlus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -34,6 +35,9 @@ export function AddCustomerPanel({
   onClose,
   onAdd,
 }: AddCustomerPanelProps) {
+  const t = useTranslations("customers");
+  const common = useTranslations("common");
+  const validation = useTranslations("validation");
   const [form, setForm] =
     useState<CustomerForm>(initialForm);
   const [errors, setErrors] = useState<
@@ -65,21 +69,21 @@ export function AddCustomerPanel({
     > = {};
 
     if (!form.name.trim()) {
-      nextErrors.name = "Customer name is required.";
+      nextErrors.name = validation("required");
     }
 
     if (!form.email.trim()) {
-      nextErrors.email = "Email is required.";
+      nextErrors.email = validation("required");
     } else if (
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
         form.email
       )
     ) {
-      nextErrors.email = "Enter a valid email.";
+      nextErrors.email = validation("invalidEmail");
     }
 
     if (!form.phone.trim()) {
-      nextErrors.phone = "Phone number is required.";
+      nextErrors.phone = validation("required");
     }
 
     setErrors(nextErrors);
@@ -110,15 +114,15 @@ export function AddCustomerPanel({
       email: form.email.trim(),
       phone: form.phone.trim(),
       status: "active",
-      lastVisit: "No visits yet",
+      lastVisit: t("noVisitsYet"),
       totalVisits: 0,
       totalSpent: 0,
       preferredService:
         form.preferredService.trim() ||
-        "Not specified",
+        t("notSpecified"),
       notes:
         form.notes.trim() ||
-        "There are no notes for this customer.",
+        t("noNotes"),
       visits: [],
     };
 
@@ -137,8 +141,8 @@ export function AddCustomerPanel({
   return (
   <SidePanel
     open={open}
-    title="Add customer"
-    subtitle="Create a new customer profile"
+    title={t("addCustomer")}
+    subtitle={t("addCustomerSubtitle")}
     size="md"
     onClose={handleClose}
     footer={
@@ -148,7 +152,7 @@ export function AddCustomerPanel({
           variant="outline"
           onClick={handleClose}
         >
-          Cancel
+          {common("cancel")}
         </Button>
 
         <Button
@@ -156,7 +160,7 @@ export function AddCustomerPanel({
           form="add-customer-form"
         >
           <UserPlus className="size-4" />
-          Add customer
+          {t("addCustomer")}
         </Button>
       </>
     }
@@ -172,11 +176,11 @@ export function AddCustomerPanel({
 
       <FormField
         id="customer-name"
-        label="Full name"
+        label={t("fullName")}
         required
         value={form.name}
         error={errors.name}
-        placeholder="Example: Sarah Miller"
+        placeholder={t("fullNamePlaceholder")}
         onChange={(value) =>
           updateField("name", value)
         }
@@ -184,7 +188,7 @@ export function AddCustomerPanel({
 
       <FormField
         id="customer-email"
-        label="Email"
+        label={t("email")}
         type="email"
         required
         value={form.email}
@@ -197,7 +201,7 @@ export function AddCustomerPanel({
 
       <FormField
         id="customer-phone"
-        label="Phone number"
+        label={t("phone")}
         type="tel"
         required
         value={form.phone}
@@ -210,10 +214,10 @@ export function AddCustomerPanel({
 
       <FormField
         id="customer-service"
-        label="Preferred service"
+        label={t("preferredService")}
         value={form.preferredService}
         error={errors.preferredService}
-        placeholder="Example: Haircut"
+        placeholder={t("preferredServicePlaceholder")}
         onChange={(value) =>
           updateField(
             "preferredService",
@@ -227,7 +231,7 @@ export function AddCustomerPanel({
           htmlFor="customer-notes"
           className="text-sm font-medium text-foreground"
         >
-          Notes
+          {common("notes")}
         </label>
 
         <textarea
@@ -240,7 +244,7 @@ export function AddCustomerPanel({
               event.target.value
             )
           }
-          placeholder="Preferences, allergies or relevant information..."
+          placeholder={t("notesPlaceholder")}
           className="
             mt-2 w-full resize-none rounded-lg
             border border-border bg-background

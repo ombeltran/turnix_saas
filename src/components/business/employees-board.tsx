@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   CalendarCheck,
   CircleUserRound,
@@ -31,6 +32,8 @@ import { services } from "@/mocks/services";
 type EmployeeStatusFilter = "all" | EmployeeStatus;
 
 export function EmployeesBoard() {
+  const t = useTranslations("employees");
+  const common = useTranslations("common");
   const [employeeList, setEmployeeList] =
     useState<Employee[]>(initialEmployees);
   const [search, setSearch] = useState("");
@@ -113,30 +116,30 @@ export function EmployeesBoard() {
     <div className="mx-auto flex max-w-7xl flex-col gap-6">
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Total employees"
+          title={t("totalEmployees")}
           value={employeeList.length}
-          description="team members registered"
+          description={t("teamMembers")}
           icon={UsersRound}
           variant="primary"
         />
         <StatCard
-          title="Active employees"
+          title={t("activeEmployees")}
           value={activeEmployees}
-          description="available for assignments"
+          description={t("availableForAssignments")}
           icon={CircleUserRound}
           variant="success"
         />
         <StatCard
-          title="Available now"
+          title={t("availableNow")}
           value={availableEmployees}
-          description="ready to receive the next turn"
+          description={t("readyForService")}
           icon={MonitorCheck}
           variant="info"
         />
         <StatCard
-          title="Turns completed"
+          title={t("completedTurns")}
           value={completedTurnsToday}
-          description={`${appointmentsToday} appointments scheduled today`}
+          description={t("scheduledToday", { count: appointmentsToday })}
           icon={TicketCheck}
           variant="warning"
         />
@@ -145,12 +148,12 @@ export function EmployeesBoard() {
       <Card>
         <CardHeader className="gap-4">
           <SectionHeader
-            title="Team and queue assignments"
-            description="Manage employees, services and stations used to attend turns"
+            title={t("teamAssignments")}
+            description={t("teamAssignmentsDescription")}
             action={
               <Button type="button" onClick={openNewEmployeePanel}>
                 <Plus className="size-4" />
-                Add employee
+                {t("addEmployee")}
               </Button>
             }
           />
@@ -159,15 +162,15 @@ export function EmployeesBoard() {
             <SearchInput
               value={search}
               onChange={setSearch}
-              placeholder="Search employees, roles or services..."
+              placeholder={t("searchPlaceholder")}
             />
             <FilterChips
               value={status}
               onChange={setStatus}
               options={[
-                { value: "all", label: "All" },
-                { value: "active", label: "Active" },
-                { value: "inactive", label: "Inactive" },
+                { value: "all", label: common("all") },
+                { value: "active", label: common("active") },
+                { value: "inactive", label: common("inactive") },
               ]}
               className="flex-none"
             />
@@ -180,14 +183,14 @@ export function EmployeesBoard() {
               <table className="w-full min-w-275 border-collapse">
                 <thead>
                   <tr className="border-b border-border text-left">
-                    <TableHeader>Employee</TableHeader>
-                    <TableHeader>Services</TableHeader>
-                    <TableHeader>Queue station</TableHeader>
-                    <TableHeader>Current turn</TableHeader>
-                    <TableHeader>Today</TableHeader>
-                    <TableHeader>Status</TableHeader>
+                    <TableHeader>{common("employee")}</TableHeader>
+                    <TableHeader>{common("services")}</TableHeader>
+                    <TableHeader>{t("queueStation")}</TableHeader>
+                    <TableHeader>{t("currentTurn")}</TableHeader>
+                    <TableHeader>{t("today")}</TableHeader>
+                    <TableHeader>{common("status")}</TableHeader>
                     <th className="pb-3 pl-4 text-right text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                      Action
+                      {t("action")}
                     </th>
                   </tr>
                 </thead>
@@ -237,7 +240,7 @@ export function EmployeesBoard() {
                               ))
                             ) : (
                               <span className="text-sm text-foreground-muted">
-                                No services assigned
+                                {t("noServicesAssigned")}
                               </span>
                             )}
                             {assignedServices.length > 2 ? (
@@ -265,7 +268,7 @@ export function EmployeesBoard() {
                             </div>
                           ) : (
                             <span className="text-sm text-foreground-muted">
-                              No active turn
+                              {t("noActiveTurn")}
                             </span>
                           )}
                         </td>
@@ -273,10 +276,10 @@ export function EmployeesBoard() {
                         <td className="px-4 py-4">
                           <div className="flex items-center gap-2 text-sm text-foreground">
                             <CalendarCheck className="size-4 text-foreground-muted" />
-                            {employee.appointmentsToday} appointments
+                            {t("appointmentsToday", { count: employee.appointmentsToday })}
                           </div>
                           <p className="mt-1 text-xs text-foreground-muted">
-                            {employee.completedTurnsToday} turns completed
+                            {t("turnsCompletedCount", { count: employee.completedTurnsToday })}
                           </p>
                         </td>
 
@@ -292,7 +295,7 @@ export function EmployeesBoard() {
                             onClick={() => openEditEmployeePanel(employee)}
                           >
                             <Pencil className="size-4" />
-                            Edit
+                            {common("edit")}
                           </Button>
                         </td>
                       </tr>
@@ -304,13 +307,13 @@ export function EmployeesBoard() {
           ) : (
             <EmptyState
               icon={UsersRound}
-              title="No employees found"
-              description="Try changing the search or selected filter."
+              title={t("noEmployees")}
+              description={t("noEmployeesDescription")}
               action={
                 employeeList.length === 0 ? (
                   <Button type="button" onClick={openNewEmployeePanel}>
                     <Plus className="size-4" />
-                    Add first employee
+                    {t("addFirstEmployee")}
                   </Button>
                 ) : undefined
               }
@@ -330,15 +333,18 @@ export function EmployeesBoard() {
 }
 
 function EmployeeAvailabilityStatus({ employee }: { employee: Employee }) {
+  const t = useTranslations("employees");
+  const common = useTranslations("common");
+
   if (employee.status === "inactive") {
-    return <StatusPill>Inactive</StatusPill>;
+    return <StatusPill>{common("inactive")}</StatusPill>;
   }
 
   if (employee.availability === "busy") {
-    return <StatusPill variant="warning">Attending</StatusPill>;
+    return <StatusPill variant="warning">{t("attending")}</StatusPill>;
   }
 
-  return <StatusPill variant="success">Available</StatusPill>;
+  return <StatusPill variant="success">{common("available")}</StatusPill>;
 }
 
 type TableHeaderProps = {

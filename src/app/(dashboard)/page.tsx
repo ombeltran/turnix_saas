@@ -79,7 +79,7 @@ export default async function DashboardPage() {
           <>
             <Button>
               <Plus className="size-4" />
-              New appointment
+              {t("newAppointment")}
             </Button>
             <Button variant="outline">
               <Link
@@ -88,7 +88,7 @@ export default async function DashboardPage() {
                 className="flex w-fit items-center gap-2"
               >
                 <Globe className="size-4" />
-                View booking site
+                {t("viewBookingSite")}
               </Link>
             </Button>
             {/* <Button variant="outline">
@@ -99,38 +99,38 @@ export default async function DashboardPage() {
         }
       />
 
-      <main className="flex-1 p-4 md:p-6 lg:p-8">
+      <main className="min-w-0 flex-1 p-4 md:p-6 lg:p-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-6">
           <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <StatCard
-              title="Today's appointments"
+              title={t("todayAppointments")}
               value={24}
-              description="compared with yesterday"
+              description={t("comparedYesterday")}
               trend="+12%"
               icon={CalendarDays}
               variant="primary"
             />
 
             <StatCard
-              title="Customers waiting"
+              title={t("customersWaiting")}
               value={8}
-              description="average wait: 7 min"
+              description={t("averageWait", { minutes: 7 })}
               icon={ListOrdered}
               variant="warning"
             />
 
             <StatCard
-              title="Services completed"
+              title={t("servicesCompleted")}
               value={18}
-              description="75% of today's schedule"
+              description={t("scheduleCompleted", { percentage: 75 })}
               icon={CheckCircle2}
               variant="success"
             />
 
             <StatCard
-              title="Today's revenue"
+              title={t("todayRevenue")}
               value="$1,245"
-              description="from 21 payments"
+              description={t("fromPayments", { count: 21 })}
               trend="+8.4%"
               icon={Banknote}
               variant="info"
@@ -139,16 +139,16 @@ export default async function DashboardPage() {
 
           <section className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
             <Card>
-              <CardHeader className="flex-row items-start justify-between gap-4">
+              <CardHeader className="items-start justify-between gap-4 sm:flex-row">
                 <div>
-                  <CardTitle>Upcoming appointments</CardTitle>
+                  <CardTitle>{t("upcomingAppointments")}</CardTitle>
                   <CardDescription>
-                    The next scheduled customers for today
+                    {t("upcomingDescription")}
                   </CardDescription>
                 </div>
 
                 <Button variant="ghost" size="sm">
-                  View schedule
+                  {t("viewAll")}
                 </Button>
               </CardHeader>
 
@@ -184,7 +184,9 @@ export default async function DashboardPage() {
                             : "warning"
                         }
                       >
-                        {appointment.status}
+                        {appointment.status === "Confirmed"
+                          ? t("confirmed")
+                          : t("waiting")}
                       </Badge>
                     </div>
                   ))}
@@ -193,13 +195,15 @@ export default async function DashboardPage() {
             </Card>
 
             <Card>
-              <CardHeader className="flex-row items-start justify-between gap-4">
+              <CardHeader className="items-start justify-between gap-4 sm:flex-row">
                 <div>
-                  <CardTitle>Live queue</CardTitle>
-                  <CardDescription>Customers currently waiting</CardDescription>
+                  <CardTitle>{t("liveQueue")}</CardTitle>
+                  <CardDescription>{t("liveQueueDescription")}</CardDescription>
                 </div>
 
-                <Badge variant="warning">{queueItems.length} waiting</Badge>
+                <Badge variant="warning">
+                  {queueItems.length} {t("waiting")}
+                </Badge>
               </CardHeader>
 
               <CardContent>
@@ -231,7 +235,7 @@ export default async function DashboardPage() {
                 </div>
 
                 <Button variant="outline" className="mt-4 w-full">
-                  Open queue
+                  {t("openQueue")}
                 </Button>
               </CardContent>
             </Card>
